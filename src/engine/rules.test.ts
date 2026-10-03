@@ -1,0 +1,154 @@
+import { describe, expect, it } from 'vitest';
+import { assess, breast, cervical, colorectal, lung, packYears, prostate } from './rules';
+import { emptyAnswers, type Answers, type Msg } from './types';
+import { en } from '../i18n/en';
+import { DICTS } from '../i18n';
+
+const A = (o: Partial<Answers>): Answers => ({ ...emptyAnswers, ...o });
+
+describe('breast (KRG 2023)', () => {
+  it('average-risk woman 50: mammogram every 2 years', () => {
+    const r = breast(A({ age: 50, sex: 'female' }));
+    expect(r.status).toBe('recommended');
+    expect(r.headline.key).toBe('breast.avg.headline');
+    expect(r.krgBased).toBe(true);
+  });
+  it('average-risk woman 40: not yet (starts at 45)', () => {
+    expect(breast(A({ age: 40, sex: 'female' })).status).toBe('notYet');
+  });
+  it('average-risk woman 72: discuss', () => {
+    expect(breast(A({ age: 72, sex: 'female' })).status).toBe('discuss');
+  });
+  it('BRCA carrier 37: high-risk, annual MRI/mammogram and genetic referral', () => {
+    const r = breast(A({ age: 37, sex: 'female', geneticMutation: true }));
+    const keys = r.details.map((d) => d.key);
+    expect(r.headline.key).toBe('breast.high.headline');
+    expect(keys).toContain('breast.high.mri35to40');
+    expect(keys).toContain('breast.high.genetic');
+  });
+  it('chest radiation 10-30 at age 50: annual mammogram', () => {
+    const r = breast(A({ age: 50, sex: 'female', chestRadiation10to30: true }));
+    expect(r.details.map((d) => d.key)).toContain('breast.high.annualMammo');
+  });
+  it('Gail >= 1.7% only counts from age 35', () => {
+    expect(breast(A({ age: 33, sex: 'female', gail5yr17: 'yes' })).headline.key).not.toBe('breast.high.headline');
+    expect(breast(A({ age: 36, sex: 'female', gail5yr17: 'yes' })).headline.key).toBe('breast.high.headline');
+  });
+  it('family history alone prompts risk assessment', () => {
+    const r = breast(A({ age: 40, sex: 'female', familyBreastOvarian: true }));
+    expect(r.status).toBe('specialist');
+  });
+  it('not applicable to men', () => {
+    expect(breast(A({ age: 50, sex: 'male' })).status).toBe('notApplicable');
+  });
+});
+
+describe('lung (KRG 2023)', () => {
+  it('computes pack-years', () => {
+    expect(packYears(A({ smoking: 'current', cigarettesPerDay: 20, smokingYears: 35 }))).toBe(35);
+  });
+  it('60-year-old current smoker with 40 pack-years: LDCT', () => {
+    const r = lung(A({ age: 60, sex: 'male', smoking: 'current', cigarettesPerDay: 40, smokingYears: 20 }));
+    expect(r.status).toBe('recommended');
+  });
+  it('former smoker quit 12 years ago: not eligible on smoking alone', () => {
+    const r = lung(A({ age: 60, sex: 'male', smoking: 'former', cigarettesPerDay: 40, smokingYears: 20, yearsSinceQuit: 12 }));
+    expect(r.status).toBe('notRecommended');
+  });
+  it('exactly 30 pack-years is not "more than 30"', () => {
+    const r = lung(A({ age: 60, sex: 'male', smoking: 'current', cigarettesPerDay: 20, smokingYears: 30 }));
+    expect(r.status).toBe('notRecommended');
+  });
+  it('occupational exposure age 58: LDCT referral', () => {
+    expect(lung(A({ age: 58, sex: 'female', occupationalExposure: true })).status).toBe('recommended');
+  });
+  it('previous lung cancer excluded', () => {
+    expect(lung(A({ age: 60, sex: 'male', personalLungCancer: true })).status).toBe('specialist');
+  });
+  it('limited life expectancy excluded', () => {
+    expect(lung(A({ age: 60, sex: 'male', smoking: 'current', cigarettesPerDay: 40, smokingYears: 30, limitedLifeExpectancy: true })).status).toBe('notRecommended');
+  });
+});
+
+describe('prostate (KRG 2023)', () => {
+  it('50 without risk factors: not recommended', () => {
+    expect(prostate(A({ age: 50, sex: 'male' })).status).toBe('notRecommended');
+  });
+  it('47 with family history: discuss', () => {
+    expect(prostate(A({ age: 47, sex: 'male', familyProstateOrOther: true })).status).toBe('discuss');
+  });
+  it('60: shared decision', () => {
+    expect(prostate(A({ age: 60, sex: 'male' })).status).toBe('discuss');
+  });
+  it('PSA 12: refer to urologist', () => {
+    const r = prostate(A({ age: 60, sex: 'male', psaValue: 12 }));
+    expect(r.status).toBe('specialist');
+    expect(r.details.map((d) => d.key)).toContain('prostate.psa.over10');
+  });
+  it('PSA 1.8 normal DRE: retest in 2 years', () => {
+    const r = prostate(A({ age: 60, sex: 'male', psaValue: 1.8, dreResult: 'normal' }));
+    expect(r.details.map((d) => d.key)).toContain('prostate.psa.under2_5');
+  });
+  it('PSA 3 abnormal DRE: biopsy pathway', () => {
+    const r = prostate(A({ age: 60, sex: 'male', psaValue: 3, dreResult: 'abnormal' }));
+    expect(r.status).toBe('specialist');
+  });
+  it('limited life expectancy: never screen', () => {
+    expect(prostate(A({ age: 65, sex: 'male', limitedLifeExpectancy: true })).status).toBe('notRecommended');
+  });
+});
+
+describe('cervical (WHO, marked non-KRG)', () => {
+  it('35: HPV test, flagged as international', () => {
+    const r = cervical(A({ age: 35, sex: 'female' }));
+    expect(r.status).toBe('recommended');
+    expect(r.krgBased).toBe(false);
+  });
+  it('HIV-positive 26: recommended', () => {
+    expect(cervical(A({ age: 26, sex: 'female', immunocompromised: true })).status).toBe('recommended');
+  });
+  it('hysterectomy: not needed', () => {
+    expect(cervical(A({ age: 40, sex: 'female', totalHysterectomy: true })).status).toBe('notRecommended');
+  });
+});
+
+describe('colorectal (international, marked non-KRG)', () => {
+  it('55 average risk: FIT or colonoscopy', () => {
+    expect(colorectal(A({ age: 55, sex: 'male' })).status).toBe('recommended');
+  });
+  it('42 with affected first-degree relative: colonoscopy', () => {
+    expect(colorectal(A({ age: 42, sex: 'female', familyColorectal: true })).headline.key).toBe('crc.familyHeadline');
+  });
+  it('IBD: specialist', () => {
+    expect(colorectal(A({ age: 30, sex: 'female', ibd: true })).status).toBe('specialist');
+  });
+});
+
+describe('i18n', () => {
+  it('every message the engine can emit exists in English', () => {
+    const msgs: Msg[] = [];
+    const ages = [20, 27, 32, 37, 42, 47, 52, 57, 62, 68, 71, 74, 80, 90];
+    const flags: Partial<Answers>[] = [
+      {}, { geneticMutation: true }, { familyBreastOvarian: true }, { personalBreastCancer: true },
+      { smoking: 'current', cigarettesPerDay: 40, smokingYears: 30 }, { smoking: 'former' }, { occupationalExposure: true },
+      { personalLungCancer: true }, { limitedLifeExpectancy: true }, { psaValue: 2 }, { psaValue: 3 }, { psaValue: 6 },
+      { psaValue: 6, dreResult: 'normal' }, { psaValue: 6, dreResult: 'abnormal' }, { psaValue: 3, dreResult: 'abnormal' }, { psaValue: 15 },
+      { familyProstateOrOther: true }, { immunocompromised: true }, { totalHysterectomy: true }, { previousAbnormalCervical: true },
+      { previousNegativeScreensAfter65: true }, { familyColorectal: true }, { ibd: true },
+    ];
+    for (const sex of ['female', 'male'] as const)
+      for (const age of ages)
+        for (const f of flags)
+          for (const r of assess(A({ age, sex, ...f })).recommendations) msgs.push(r.headline, ...r.details, ...(r.international ?? []));
+    const missing = [...new Set(msgs.map((m) => m.key))].filter((k) => !(k in en));
+    expect(missing).toEqual([]);
+  });
+  it('all languages define every key and keep placeholders', () => {
+    for (const [lang, dict] of Object.entries(DICTS)) {
+      for (const [k, v] of Object.entries(en)) {
+        expect(dict[k as keyof typeof en], `${lang}:${k}`).toBeTruthy();
+        for (const ph of v.match(/\{\w+\}/g) ?? []) expect(dict[k as keyof typeof en], `${lang}:${k} ${ph}`).toContain(ph);
+      }
+    }
+  });
+});

@@ -1,0 +1,6 @@
+{
+  "appId": "krd.health.cancerscreening",
+  "appName": "Cancer Screening Guide",
+  "webDir": "dist",
+  "android": { "allowMixedContent": false }
+}
