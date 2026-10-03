@@ -1,11 +1,10 @@
 /**
  * Deterministic screening rule engine.
  *
- * Breast, lung and prostate rules encode the Kurdistan Regional Government (KRG)
- * Ministry of Health "Cancer Screening Clinical Practice Guidelines" 2023 (V01).
- * The cervical and colorectal sections of that document were not available when
- * this engine was written, so those rules follow WHO / IARC / NHS / USPSTF evidence
- * and every resulting recommendation is marked `krgBased: false`.
+ * All five cancers encode the Kurdistan Regional Government (KRG) Ministry of Health
+ * "Cancer Screening Clinical Practice Guidelines" 2023 (V01). Where the KRG text is
+ * silent (e.g. upper age limits, immunocompromise), the gap is filled from WHO /
+ * IARC / NHS / USPSTF evidence and the message says so.
  *
  * Every rule returns message keys (translated in src/i18n) and source ids
  * (listed in src/engine/sources.ts) so each recommendation can be traced.
@@ -91,14 +90,15 @@ export function lung(a: Answers): Recommendation {
 
   const recentSmoker = a.smoking === 'current' || (a.smoking === 'former' && a.yearsSinceQuit != null && a.yearsSinceQuit <= 10);
   const heavySmoker = py != null && py > 30 && recentSmoker;
-  const otherRisk = a.occupationalExposure || a.copdOrTb;
+  const otherRisk = a.occupationalExposure || a.copdOrTb || a.tammemagi2 === 'yes';
   const quit = a.smoking === 'current' ? [m('lung.quit')] : [];
 
   if (age >= 55 && age <= 70 && (heavySmoker || otherRisk)) {
     if (heavySmoker) details.push(m('lung.criteriaSmoking'));
     if (a.occupationalExposure) details.push(m('lung.criteriaOccupational'));
     if (a.copdOrTb) details.push(m('lung.criteriaCopd'));
-    details.push(m('lung.ldct'), m('lung.teamReview'), ...quit);
+    if (a.tammemagi2 === 'yes') details.push(m('lung.criteriaTammemagi'));
+    details.push(m('lung.ldct'), m('lung.negative'), m('lung.teamReview'), ...quit);
     return { ...base, status: 'recommended', headline: m('lung.headline'), details, international: intl };
   }
   if (age > 70 && (heavySmoker || otherRisk)) {
@@ -186,7 +186,7 @@ export function prostate(a: Answers): Recommendation {
 }
 
 export function cervical(a: Answers): Recommendation {
-  const base = { cancer: 'cervical' as const, krgBased: false, sources: ['who_cervical2021', 'iarc', 'nhs', 'uspstf_cervical2018', 'cdc'] as Recommendation['sources'] };
+  const base = { cancer: 'cervical' as const, krgBased: true, sources: ['krg2023', 'who_cervical2021', 'iarc', 'nhs', 'uspstf_cervical2018'] as Recommendation['sources'] };
   const age = a.age ?? 0;
   const intl = [m('cervical.intl')];
   if (a.sex !== 'female') return { ...base, status: 'notApplicable', headline: m('cervical.na'), details: [] };
@@ -196,78 +196,76 @@ export function cervical(a: Answers): Recommendation {
   if (a.previousAbnormalCervical) {
     return { ...base, status: 'specialist', headline: m('cervical.abnormalHeadline'), details: [m('cervical.abnormal')], international: intl };
   }
-  const details: Msg[] = [m('cervical.krgPending')];
-  if (a.immunocompromised) {
-    if (age < 25) {
-      details.push(m('cervical.immunoStart25'));
-      return { ...base, status: 'notYet', headline: m('cervical.notYet'), details, international: intl };
-    }
-    details.push(m('cervical.immuno'));
-    return { ...base, status: 'recommended', headline: m('cervical.headline'), details, international: intl };
+  if (a.sexuallyActive === 'no') {
+    return { ...base, status: 'notYet', headline: m('cervical.notYet'), details: [m('cervical.notActive')], international: intl };
   }
-  if (age < 25) {
-    details.push(m('cervical.start'));
-    return { ...base, status: 'notYet', headline: m('cervical.notYet'), details, international: intl };
-  }
+  const details: Msg[] = [];
+  if (a.immunocompromised) details.push(m('cervical.immuno'));
   if (age < 30) {
-    details.push(m('cervical.age25to29'));
+    details.unshift(m('cervical.under30'));
+    details.push(m('cervical.unscheduled'));
     return { ...base, status: 'discuss', headline: m('cervical.discussHeadline'), details, international: intl };
   }
   if (age <= 49) {
-    details.push(m('cervical.hpv5'), m('cervical.noHpvTest'));
+    details.unshift(m('cervical.methods'));
+    details.push(m('cervical.unscheduled'));
     return { ...base, status: 'recommended', headline: m('cervical.headline'), details, international: intl };
   }
-  if (age <= 65) {
-    details.push(m('cervical.hpv5'), m('cervical.stopAfter50'));
+  if (age <= 69) {
+    details.unshift(m('cervical.methods50'));
+    details.push(m('cervical.unscheduled'));
     return { ...base, status: 'recommended', headline: m('cervical.headline'), details, international: intl };
   }
   if (a.previousNegativeScreensAfter65) {
-    details.push(m('cervical.over65Stop'));
-    return { ...base, status: 'notRecommended', headline: m('cervical.over65StopHeadline'), details, international: intl };
+    details.unshift(m('cervical.over69Stop'));
+    return { ...base, status: 'notRecommended', headline: m('cervical.over69StopHeadline'), details, international: intl };
   }
-  details.push(m('cervical.over65Discuss'));
-  return { ...base, status: 'discuss', headline: m('cervical.discussHeadline'), details, international: intl };
+  details.unshift(m('cervical.over69'));
+  return { ...base, status: 'discuss', headline: m('cervical.over69Headline'), details, international: intl };
+}
+
+/** Age at which colonoscopy starts for KRG high-risk family history. */
+export function crcHighRiskStart(a: Answers): number {
+  return a.youngestDxAge != null && a.youngestDxAge - 10 < 40 ? Math.max(a.youngestDxAge - 10, 18) : 40;
 }
 
 export function colorectal(a: Answers): Recommendation {
-  const base = { cancer: 'colorectal' as const, krgBased: false, sources: ['iarc', 'nhs', 'uspstf_crc2021', 'usmstf_crc2017', 'cdc'] as Recommendation['sources'] };
+  const base = { cancer: 'colorectal' as const, krgBased: true, sources: ['krg2023', 'iarc', 'nhs', 'uspstf_crc2021', 'usmstf_crc2017'] as Recommendation['sources'] };
   const age = a.age ?? 0;
   const intl = [m('crc.intl')];
-  const details: Msg[] = [m('crc.krgPending')];
   if (a.personalPolypsOrCrc || a.ibd || a.lynchSyndrome) {
-    details.push(m('crc.highRiskConditions'));
+    const details: Msg[] = [m('crc.highRiskConditions')];
+    if (a.personalPolypsOrCrc) details.push(m('crc.polyps'));
     return { ...base, status: 'specialist', headline: m('crc.specialistHeadline'), details, international: intl };
   }
   if (a.limitedLifeExpectancy) {
-    details.push(m('crc.lifeExpectancy'));
-    return { ...base, status: 'notRecommended', headline: m('crc.notRecommended'), details, international: intl };
+    return { ...base, status: 'notRecommended', headline: m('crc.notRecommended'), details: [m('crc.lifeExpectancy')], international: intl };
   }
-  if (a.familyColorectal) {
-    if (age < 40) {
-      details.push(m('crc.familyStart40'));
+  const high = a.crcFamily === 'fdrUnder60' || a.crcFamily === 'twoFdr';
+  const moderate = a.crcFamily === 'fdr60plus' || a.crcFamily === 'twoSdr';
+  if (high || moderate) {
+    const start = high ? crcHighRiskStart(a) : 40;
+    const details: Msg[] = [m(high ? 'crc.high' : 'crc.moderate', { start })];
+    if (age < start) {
+      details.push(m('crc.notYetFamily', { start }));
       return { ...base, status: 'notYet', headline: m('crc.notYet'), details, international: intl };
     }
-    details.push(m('crc.familyColonoscopy'));
-    return { ...base, status: 'recommended', headline: m('crc.familyHeadline'), details, international: intl };
+    if (age > 75) {
+      details.push(m('crc.age76to85'));
+      return { ...base, status: 'discuss', headline: m('crc.discussHeadline'), details, international: intl };
+    }
+    return { ...base, status: 'recommended', headline: m(high ? 'crc.highHeadline' : 'crc.moderateHeadline', { start }), details, international: intl };
   }
   if (age < 45) {
-    details.push(m('crc.start'));
-    return { ...base, status: 'notYet', headline: m('crc.notYet'), details, international: intl };
+    return { ...base, status: 'notYet', headline: m('crc.notYet'), details: [m('crc.start')], international: intl };
   }
-  if (age < 50) {
-    details.push(m('crc.age45to49'));
-    return { ...base, status: 'discuss', headline: m('crc.discussHeadline'), details, international: intl };
-  }
-  if (age <= 74) {
-    details.push(m('crc.options'));
-    return { ...base, status: 'recommended', headline: m('crc.headline'), details, international: intl };
+  if (age <= 75) {
+    return { ...base, status: 'recommended', headline: m('crc.headline'), details: [m('crc.options')], international: intl };
   }
   if (age <= 85) {
-    details.push(m('crc.age76to85'));
-    return { ...base, status: 'discuss', headline: m('crc.discussHeadline'), details, international: intl };
+    return { ...base, status: 'discuss', headline: m('crc.discussHeadline'), details: [m('crc.age76to85')], international: intl };
   }
-  details.push(m('crc.over85'));
-  return { ...base, status: 'notRecommended', headline: m('crc.notRecommended'), details, international: intl };
+  return { ...base, status: 'notRecommended', headline: m('crc.notRecommended'), details: [m('crc.over85')], international: intl };
 }
 
 export function assess(a: Answers): Assessment {

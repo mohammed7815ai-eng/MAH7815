@@ -17,7 +17,8 @@ People with symptoms need diagnostic work-up, not screening.
 
 ## Lung (KRG)
 - LDCT only for high-risk people who are candidates for curative treatment.
-- High-risk criteria: age 55–70; active smoker > 30 pack-years; or quit within 10 years; Tammemagi PLCOm2012 6-year risk > 2%.
+- High-risk criteria: age 55–70 with active smoking > 30 pack-years, smoking cessation within the last 10 years, or Tammemagi calculator 6-year risk > 2%.
+- A negative screen does not guarantee absence of lung cancer; a diagnosed patient moves from screening to staging.
 - Also high risk (sent for LDCT) if one of: occupational exposure (arsenic, asbestos, beryllium, cadmium, chromium, coal smoke, diesel fumes, nickel, silica, soot, uranium); COPD or pulmonary tuberculosis.
 - Other risk factors assessed: radon, cancer history (lymphoma, head & neck, smoking-related), family history in first-degree relatives, pulmonary fibrosis, second-hand smoke.
 - Exclusions: symptoms of lung cancer; previous lung cancer; functional status/comorbidity prohibiting curative treatment.
@@ -35,17 +36,23 @@ People with symptoms need diagnostic work-up, not screening.
 - Algorithm: PSA < 4 and DRE normal -> follow up 1–2 years; PSA < 4 and DRE abnormal -> TRUS + biopsy; PSA 4–10 and DRE normal -> consider TRUS, if normal repeat PSA + DRE in 3–6 months; PSA 4–10 and DRE abnormal -> TRUS + biopsy; PSA > 10 -> TRUS + biopsy.
 - Re-screening interval after negative result: PSA < 2.5 ng/mL every 2 years; PSA >= 2.5 yearly.
 
-## Cervical (KRG text incomplete in this app — use WHO 2021 as primary)
-- KRG background: >99% of cervical cancer linked to persistent high-risk HPV (16/18 ~70%); local incidence low under 30; best programmes reduce rates by up to 80%. Risk factors: high-risk HPV, smoking, early sexual activity, multiple partners, immunocompromise, low socioeconomic status.
-- WHO 2021: HPV DNA primary screening from age 30, every 5–10 years; after 50, stop after two consecutive negative results. Women living with HIV: start at 25, every 3–5 years. Where HPV testing is unavailable: VIA or cytology every 3 years. HPV vaccination of girls aged 9–14.
-- NHS: HPV primary screening 25–64. USPSTF 2018: cytology every 3 years 21–29; 30–65 hrHPV every 5 years (or co-test every 5 years, or cytology every 3 years); stop after 65 with adequate prior negative screening; no screening after total hysterectomy for benign reasons.
+## Cervical (KRG)
+- Background: >99% linked to persistent high-risk HPV (16/18 ~70%); local incidence low under 30; best programmes reduce rates by up to 80%. Risk factors: high-risk HPV, smoking, early sexual activity, multiple partners, immunocompromise, low socioeconomic status.
+- Modalities: cytology (Pap), primary HPV testing, or co-testing.
+- Initiation: MoH targets married women aged 30+; screening should begin within 3 years after a woman begins sexual activity; private sector may start at 25.
+- Intervals: HPV DNA every 5–10 years (general population); Pap every 3 years until 49, every 5 years at 50–69.
+- Unscheduled screening when starting oral contraceptives, IUD insertion, HRT initiation, diagnosis of genital warts / pelvic infection, or pre-operative gynaecological work-up.
+- KRG is silent on immunocompromise (WHO: women living with HIV from 25, every 3–5 years) and on stopping after 69 (WHO: stop after 50 with two consecutive negatives; USPSTF: stop after 65 with adequate negative history). HPV vaccination of girls 9–14 (WHO).
 
-## Colorectal (KRG text not available in this app — use international evidence)
-- IARC Handbook Vol. 17 / WHO: FIT or endoscopy-based screening at 50–74.
-- NHS: home FIT kit every 2 years at 50–74.
-- USPSTF 2021: 45–75 (FIT yearly, stool DNA-FIT 1–3 years, CT colonography 5 years, flexible sigmoidoscopy 5 years, colonoscopy 10 years); 76–85 selective; not after 85.
-- US Multi-Society Task Force 2017: first-degree relative with CRC or advanced adenoma before 60 (or two FDRs any age) -> colonoscopy from 40 or 10 years before the youngest affected relative, every 5 years.
-- IBD, Lynch syndrome, FAP, previous CRC or polyps -> specialist surveillance.
+## Colorectal (KRG)
+- Colonoscopy is the gold standard; FIT is the primary alternative for those refusing colonoscopy.
+- Average risk (45–75; no personal/family history of CRC, polyps, IBD or genetic syndromes): colonoscopy every 10 years, or annual FIT if colonoscopy is refused.
+- 76–85: routine screening not recommended unless healthy and previously unscreened; individualise by life expectancy.
+- Moderate risk (advanced adenoma or CRC in one FDR diagnosed at >= 60, or two second-degree relatives): colonoscopy from 40, every 10 years.
+- High risk (advanced adenoma or CRC in two FDRs at any age, or one FDR diagnosed < 60): colonoscopy from 40 or 10 years before the youngest affected relative's diagnosis (whichever is earlier), every 5 years.
+- Polyp surveillance: 1–10 years depending on size, number and histology; stop if life expectancy < 10 years. IBD and genetic syndromes (Lynch, FAP): specialist surveillance.
+- Quality: caecal intubation rate >= 95%, ADR > 30% (men) / > 20% (women), withdrawal time >= 6 minutes.
+- International comparison: IARC/WHO FIT or endoscopy 50–74; NHS FIT every 2 years 50–74; USPSTF 2021 45–75.
 
 ## International comparison (breast, lung, prostate)
 - Breast: WHO/IARC biennial 50–69; NHS every 3 years 50–71; USPSTF 2024 biennial 40–74.

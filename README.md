@@ -14,12 +14,12 @@ A citizen-facing cancer screening guidance app for the Kurdistan Region of Iraq,
 | Cancer | Rules from | Notes |
 |---|---|---|
 | Breast | KRG MOH 2023 | Average risk: mammogram every 2 years, 45–69. High-risk groups A/B/C: BSE/CBE from 30, annual MRI/mammogram 35–40, annual mammogram 45–69, genetic counselling for group C. KRG text does not specify ages 41–44 for high risk; the app says so. |
-| Lung | KRG MOH 2023 | Age 55–70 with >30 pack-years and smoking now or quit ≤10 years, or occupational exposure, or COPD/TB → annual LDCT (Lung-RADS). Exclusions applied. |
+| Lung | KRG MOH 2023 | Age 55–70 with >30 pack-years and smoking now or quit ≤10 years, Tammemagi 6-year risk >2%, occupational exposure, or COPD/TB → annual LDCT (Lung-RADS). Exclusions applied. |
 | Prostate | KRG MOH 2023 | Informed choice; 45+ with risk factors, 55–72 shared decision, >72 only if life expectancy >10 y. PSA/DRE follow-up algorithm and re-test intervals included. |
-| Cervical | WHO 2021 (+NHS, USPSTF) | KRG cervical section was cut off in the text provided. Marked "International evidence" in the app. |
-| Colorectal | IARC / NHS / USPSTF 2021 / USMSTF 2017 | KRG colorectal section was not in the text provided. Marked "International evidence" in the app. |
+| Cervical | KRG MOH 2023 | MoH programme for married women from 30 (private sector from 25; within 3 years of sexual debut). HPV DNA every 5–10 y, or Pap every 3 y to 49 and every 5 y at 50–69. Extra tests at OCP/IUD/HRT start, genital warts, pelvic infection, pre-op. WHO used where KRG is silent (HIV, after 69). |
+| Colorectal | KRG MOH 2023 | Average risk 45–75: colonoscopy every 10 y (FIT yearly if refused). Moderate risk: colonoscopy from 40 every 10 y. High risk: from 40 or 10 y before youngest relative's diagnosis, every 5 y. 76–85 individualised. Polyp/IBD/Lynch → specialist. |
 
-All rules live in `src/engine/rules.ts`, sources in `src/engine/sources.ts`, tests in `src/engine/rules.test.ts`. When the KRG cervical and colorectal sections are available, update those two functions and flip `krgBased` to `true`.
+All rules live in `src/engine/rules.ts`, sources in `src/engine/sources.ts`, tests in `src/engine/rules.test.ts`.
 
 **Translations** (`src/i18n/*.ts`) were machine-drafted and must be reviewed by native-speaking clinicians before public release. The test suite checks that every language has every key.
 

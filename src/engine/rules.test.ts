@@ -59,6 +59,9 @@ describe('lung (KRG 2023)', () => {
     const r = lung(A({ age: 60, sex: 'male', smoking: 'current', cigarettesPerDay: 20, smokingYears: 30 }));
     expect(r.status).toBe('notRecommended');
   });
+  it('Tammemagi > 2% age 60: LDCT', () => {
+    expect(lung(A({ age: 60, sex: 'male', smoking: 'former', cigarettesPerDay: 10, smokingYears: 20, yearsSinceQuit: 15, tammemagi2: 'yes' })).status).toBe('recommended');
+  });
   it('occupational exposure age 58: LDCT referral', () => {
     expect(lung(A({ age: 58, sex: 'female', occupationalExposure: true })).status).toBe('recommended');
   });
@@ -98,26 +101,52 @@ describe('prostate (KRG 2023)', () => {
   });
 });
 
-describe('cervical (WHO, marked non-KRG)', () => {
-  it('35: HPV test, flagged as international', () => {
+describe('cervical (KRG 2023)', () => {
+  it('35: HPV every 5-10 y or Pap every 3 y', () => {
     const r = cervical(A({ age: 35, sex: 'female' }));
     expect(r.status).toBe('recommended');
-    expect(r.krgBased).toBe(false);
+    expect(r.krgBased).toBe(true);
+    expect(r.details.map((d) => d.key)).toContain('cervical.methods');
   });
-  it('HIV-positive 26: recommended', () => {
-    expect(cervical(A({ age: 26, sex: 'female', immunocompromised: true })).status).toBe('recommended');
+  it('55: Pap every 5 years', () => {
+    expect(cervical(A({ age: 55, sex: 'female' })).details.map((d) => d.key)).toContain('cervical.methods50');
+  });
+  it('never sexually active: not yet', () => {
+    expect(cervical(A({ age: 40, sex: 'female', sexuallyActive: 'no' })).status).toBe('notYet');
+  });
+  it('26: discuss (MoH from 30, private from 25)', () => {
+    expect(cervical(A({ age: 26, sex: 'female' })).status).toBe('discuss');
+  });
+  it('72 with normal history: can stop', () => {
+    expect(cervical(A({ age: 72, sex: 'female', previousNegativeScreensAfter65: true })).status).toBe('notRecommended');
   });
   it('hysterectomy: not needed', () => {
     expect(cervical(A({ age: 40, sex: 'female', totalHysterectomy: true })).status).toBe('notRecommended');
   });
 });
 
-describe('colorectal (international, marked non-KRG)', () => {
-  it('55 average risk: FIT or colonoscopy', () => {
-    expect(colorectal(A({ age: 55, sex: 'male' })).status).toBe('recommended');
+describe('colorectal (KRG 2023)', () => {
+  it('46 average risk: colonoscopy every 10 years', () => {
+    const r = colorectal(A({ age: 46, sex: 'male' }));
+    expect(r.status).toBe('recommended');
+    expect(r.headline.key).toBe('crc.headline');
+    expect(r.krgBased).toBe(true);
   });
-  it('42 with affected first-degree relative: colonoscopy', () => {
-    expect(colorectal(A({ age: 42, sex: 'female', familyColorectal: true })).headline.key).toBe('crc.familyHeadline');
+  it('42 with FDR diagnosed at 65: moderate risk, 10-yearly from 40', () => {
+    expect(colorectal(A({ age: 42, sex: 'female', crcFamily: 'fdr60plus' })).headline.key).toBe('crc.moderateHeadline');
+  });
+  it('FDR diagnosed at 45: start at 35, every 5 years', () => {
+    const r = colorectal(A({ age: 36, sex: 'female', crcFamily: 'fdrUnder60', youngestDxAge: 45 }));
+    expect(r.status).toBe('recommended');
+    expect(r.details[0].params?.start).toBe(35);
+  });
+  it('FDR diagnosed at 55, age 38: not yet, start 40', () => {
+    const r = colorectal(A({ age: 38, sex: 'female', crcFamily: 'fdrUnder60', youngestDxAge: 55 }));
+    expect(r.status).toBe('notYet');
+    expect(r.details[0].params?.start).toBe(40);
+  });
+  it('80 average risk: individual decision', () => {
+    expect(colorectal(A({ age: 80, sex: 'male' })).status).toBe('discuss');
   });
   it('IBD: specialist', () => {
     expect(colorectal(A({ age: 30, sex: 'female', ibd: true })).status).toBe('specialist');
@@ -127,14 +156,14 @@ describe('colorectal (international, marked non-KRG)', () => {
 describe('i18n', () => {
   it('every message the engine can emit exists in English', () => {
     const msgs: Msg[] = [];
-    const ages = [20, 27, 32, 37, 42, 47, 52, 57, 62, 68, 71, 74, 80, 90];
+    const ages = [20, 27, 32, 37, 42, 47, 52, 57, 62, 68, 71, 74, 78, 80, 90];
     const flags: Partial<Answers>[] = [
       {}, { geneticMutation: true }, { familyBreastOvarian: true }, { personalBreastCancer: true },
       { smoking: 'current', cigarettesPerDay: 40, smokingYears: 30 }, { smoking: 'former' }, { occupationalExposure: true },
       { personalLungCancer: true }, { limitedLifeExpectancy: true }, { psaValue: 2 }, { psaValue: 3 }, { psaValue: 6 },
       { psaValue: 6, dreResult: 'normal' }, { psaValue: 6, dreResult: 'abnormal' }, { psaValue: 3, dreResult: 'abnormal' }, { psaValue: 15 },
       { familyProstateOrOther: true }, { immunocompromised: true }, { totalHysterectomy: true }, { previousAbnormalCervical: true },
-      { previousNegativeScreensAfter65: true }, { familyColorectal: true }, { ibd: true },
+      { previousNegativeScreensAfter65: true }, { sexuallyActive: 'no' }, { crcFamily: 'fdr60plus' }, { crcFamily: 'twoFdr', youngestDxAge: 42 }, { crcFamily: 'twoSdr' }, { ibd: true }, { personalPolypsOrCrc: true }, { tammemagi2: 'yes' },
     ];
     for (const sex of ['female', 'male'] as const)
       for (const age of ages)

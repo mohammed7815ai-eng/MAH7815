@@ -27,6 +27,7 @@ export interface Answers {
   occupationalExposure: boolean;
   copdOrTb: boolean;
   personalLungCancer: boolean;
+  tammemagi2: YesNoUnknown; // Tammemagi PLCOm2012 6-year risk > 2%
 
   // Prostate
   familyProstateOrOther: boolean;
@@ -40,9 +41,12 @@ export interface Answers {
   immunocompromised: boolean; // incl. HIV
   previousAbnormalCervical: boolean;
   previousNegativeScreensAfter65: boolean;
+  sexuallyActive: YesNoUnknown; // married or ever sexually active
 
   // Colorectal
-  familyColorectal: boolean;
+  /** KRG risk strata by family history of CRC / advanced adenoma */
+  crcFamily: 'none' | 'fdr60plus' | 'fdrUnder60' | 'twoFdr' | 'twoSdr';
+  youngestDxAge: number | null;
   ibd: boolean;
   personalPolypsOrCrc: boolean;
 }
@@ -66,6 +70,7 @@ export const emptyAnswers: Answers = {
   occupationalExposure: false,
   copdOrTb: false,
   personalLungCancer: false,
+  tammemagi2: 'unknown',
   familyProstateOrOther: false,
   africanAncestry: false,
   lynchSyndrome: false,
@@ -75,7 +80,9 @@ export const emptyAnswers: Answers = {
   immunocompromised: false,
   previousAbnormalCervical: false,
   previousNegativeScreensAfter65: false,
-  familyColorectal: false,
+  sexuallyActive: 'unknown',
+  crcFamily: 'none',
+  youngestDxAge: null,
   ibd: false,
   personalPolypsOrCrc: false,
 };

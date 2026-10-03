@@ -32,7 +32,7 @@ export function Questionnaire({ answers, onChange, onSubmit, onReset }: {
     </label>
   );
 
-  const ynu = (k: 'lifetimeRisk20' | 'gail5yr17', label: string) => (
+  const ynu = (k: 'lifetimeRisk20' | 'gail5yr17' | 'tammemagi2' | 'sexuallyActive', label: string) => (
     <fieldset className="ynu">
       <legend>{label}</legend>
       {(['yes', 'no', 'unknown'] as YesNoUnknown[]).map((v) => (
@@ -96,15 +96,30 @@ export function Questionnaire({ answers, onChange, onSubmit, onReset }: {
 
       {female && (
         <Section title={t('form.cervicalSection')}>
+          {ynu('sexuallyActive', t('form.sexuallyActive'))}
           {check('totalHysterectomy', t('form.hysterectomy'))}
           {check('immunocompromised', t('form.immuno'))}
           {check('previousAbnormalCervical', t('form.prevAbnormal'))}
-          {(answers.age ?? 0) > 65 && check('previousNegativeScreensAfter65', t('form.negativeAfter65'))}
+          {(answers.age ?? 0) > 69 && check('previousNegativeScreensAfter65', t('form.negativeAfter65'))}
         </Section>
       )}
 
       <Section title={t('form.crcSection')}>
-        {check('familyColorectal', t('form.familyCrc'))}
+        <fieldset className="field">
+          <legend>{t('form.crcFamily')}</legend>
+          {(['none', 'fdr60plus', 'fdrUnder60', 'twoFdr', 'twoSdr'] as const).map((v) => (
+            <label key={v} className="check">
+              <input type="radio" name="crcFamily" checked={answers.crcFamily === v} onChange={() => set('crcFamily', v)} />
+              <span>{t(`crcFam.${v}`)}</span>
+            </label>
+          ))}
+        </fieldset>
+        {(answers.crcFamily === 'fdrUnder60' || answers.crcFamily === 'twoFdr') && (
+          <label className="field">
+            <span>{t('form.youngestDxAge')}</span>
+            <input type="number" inputMode="numeric" min={1} max={100} value={answers.youngestDxAge ?? ''} onChange={(e) => set('youngestDxAge', num(e.target.value))} />
+          </label>
+        )}
         {check('ibd', t('form.ibd'))}
         {check('personalPolypsOrCrc', t('form.personalPolyps'))}
         {check('lynchSyndrome', t('form.lynch'))}
@@ -141,6 +156,7 @@ export function Questionnaire({ answers, onChange, onSubmit, onReset }: {
           </div>
         )}
         {answers.smoking !== 'never' && py != null && <p className="hint">{t('form.packYearsLive', { py })}</p>}
+        {answers.smoking !== 'never' && ynu('tammemagi2', t('form.tammemagi'))}
         {check('occupationalExposure', t('form.occupational'))}
         {check('copdOrTb', t('form.copdTb'))}
         {check('personalLungCancer', t('form.personalLung'))}
