@@ -1,0 +1,16 @@
+name: Short share link
+# Creates the short link tinyurl.com/KRGscreening for the public website (run once; re-running is harmless).
+on:
+  workflow_dispatch:
+  push:
+    branches: [cancer-screening-app]
+    paths: ['.github/workflows/shortlink.yml']
+jobs:
+  shorten:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          URL=https://mohammed7815ai-eng.github.io/MAH7815/
+          echo "tinyurl: $(curl -sS "https://tinyurl.com/api-create.php?alias=KRGscreening&url=$URL")"
+          echo "is.gd:   $(curl -sS "https://is.gd/create.php?format=simple&shorturl=KRGscreening&url=$URL")"
+          echo "check:   $(curl -sSI https://tinyurl.com/KRGscreening | grep -i '^location')"

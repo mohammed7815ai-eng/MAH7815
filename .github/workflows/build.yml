@@ -53,11 +53,6 @@ jobs:
       - run: >-
           curl -fsS -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json"
           https://api.github.com/repos/${{ github.repository }}/pages/builds
-      - name: Short share link (is.gd/KRGscreening)
-        continue-on-error: true
-        run: |
-          curl -sS "https://is.gd/create.php?format=json&shorturl=KRGscreening&url=https%3A%2F%2Fmohammed7815ai-eng.github.io%2FMAH7815%2F"; echo
-          curl -sSI https://is.gd/KRGscreening | grep -i '^location' || true
       - name: Cloudflare Pages (optional)
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: npx --yes wrangler@4 pages deploy site --project-name cancer-screening-guide --branch main
