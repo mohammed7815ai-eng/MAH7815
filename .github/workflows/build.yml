@@ -63,7 +63,7 @@ jobs:
         with: { node-version: 22, cache: npm }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '21' }
-      - uses: android-actions/setup-android@v3
+      # GitHub's ubuntu runners ship the Android SDK (ANDROID_HOME); no setup action needed.
       - run: npm ci
         env: { ELECTRON_SKIP_BINARY_DOWNLOAD: '1' }
       # Same build as the desktop app: no service worker inside the Android WebView.
