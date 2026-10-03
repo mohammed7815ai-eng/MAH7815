@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { useI18n } from '../i18n';
 import { packYears } from '../engine/rules';
+import { Hero } from './Hero';
 import type { Answers, YesNoUnknown } from '../engine/types';
 
 type BoolKey = { [K in keyof Answers]: Answers[K] extends boolean ? K : never }[keyof Answers];
@@ -58,6 +59,7 @@ export function Questionnaire({ answers, onChange, onSubmit, onReset }: {
 
   return (
     <form className="questionnaire" onSubmit={(e) => { e.preventDefault(); submit(); }}>
+      <Hero caption={t('hero.caption')} />
       <p className="lead">{t('form.intro')}</p>
 
       <Section title={t('form.basics')}>

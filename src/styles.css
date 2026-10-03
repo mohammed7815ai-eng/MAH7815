@@ -312,3 +312,10 @@ button.link { background: none; border: none; padding: 0 4px; color: var(--accen
 .site-footer .credit svg { flex: none; border-radius: 3px; }
 button.share { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); border-color: var(--accent); font-weight: 600; }
 @media print { .site-footer { border: 0; } }
+
+/* Hero illustration */
+.hero { margin: 0 0 16px; border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / 0.08); }
+.hero svg { display: block; width: 100%; height: auto; aspect-ratio: 8 / 3; }
+.hero figcaption { padding: 10px 14px; font-weight: 700; color: var(--accent); text-align: center; font-size: 1.05rem; }
+@media (max-width: 480px) { .hero svg { aspect-ratio: 16 / 9; } }
+@media print { .hero { display: none; } }

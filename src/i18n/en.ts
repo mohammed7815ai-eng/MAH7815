@@ -311,6 +311,7 @@ export const en = {
   'share.button': "Share this guide",
   'share.copied': "Link copied. Paste it into any app to share.",
   'share.text': "Find out which cancer screening tests are right for you, based on the Kurdistan Region guidelines.",
+  'hero.caption': "A healthier future for our community starts with early screening",
 };
 
 export type MessageKey = keyof typeof en;
