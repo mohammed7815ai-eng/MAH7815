@@ -307,6 +307,10 @@ export const en = {
   'thanks.female': "Thank you for taking the time to look after your health. We wish you a long and healthy life.",
   'thanks.male': "Thank you for taking the time to look after your health. We wish you a long and healthy life.",
   'about.privacyLocal': "Privacy: your answers are processed on your device and never uploaded.",
+  'footer.developedBy': "Developed by:",
+  'share.button': "Share this guide",
+  'share.copied': "Link copied. Paste it into any app to share.",
+  'share.text': "Find out which cancer screening tests are right for you, based on the Kurdistan Region guidelines.",
 };
 
 export type MessageKey = keyof typeof en;

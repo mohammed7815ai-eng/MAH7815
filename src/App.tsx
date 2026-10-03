@@ -8,6 +8,8 @@ import { Learn } from './components/Learn';
 import { Assistant } from './components/Assistant';
 import { About } from './components/About';
 import { TranslationEditor } from './components/TranslationEditor';
+import { KurdistanFlag } from './components/KurdistanFlag';
+import { Footer } from './components/Footer';
 
 type Tab = 'check' | 'learn' | 'assistant' | 'translate' | 'about';
 
@@ -49,10 +51,7 @@ export default function App() {
     <div className="app">
       <header className="topbar no-print">
         <div className="brand">
-          <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden>
-            <circle cx="16" cy="16" r="15" fill="var(--accent)" />
-            <path d="M16 7c-3 0-5 2.5-5 5.5 0 4 5 8 5 12.5 0-4.5 5-8.5 5-12.5C21 9.5 19 7 16 7z" fill="var(--on-accent)" />
-          </svg>
+          <KurdistanFlag className="flag" width={54} />
           <div>
             <h1>{t('app.title')}</h1>
             <p className="subtitle">{t('app.subtitle')}</p>
@@ -109,6 +108,8 @@ export default function App() {
         {__TRANSLATION_EDITOR__ && tab === 'translate' && <TranslationEditor />}
         {tab === 'about' && <About />}
       </main>
+
+      <Footer />
     </div>
   );
 }

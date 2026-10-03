@@ -1,6 +1,6 @@
 {
   "name": "cancer-screening-guide",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Cancer screening guidance (KRG MOH 2023) for web, Windows and Android in English, Sorani, Kurmanji and Arabic",
   "main": "electron/main.cjs",
   "scripts": {
