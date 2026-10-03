@@ -2,7 +2,7 @@ name: Build web, Windows and Android
 
 on:
   push:
-    branches: [main]
+    branches: [main, cancer-screening-app]
     tags: ['v*']
   pull_request:
   workflow_dispatch:
@@ -66,7 +66,8 @@ jobs:
       - uses: android-actions/setup-android@v3
       - run: npm ci
         env: { ELECTRON_SKIP_BINARY_DOWNLOAD: '1' }
-      - run: npm run build
+      # Same build as the desktop app: no service worker inside the Android WebView.
+      - run: npm run build:electron
       - run: npx cap add android
       - name: App icons
         continue-on-error: true

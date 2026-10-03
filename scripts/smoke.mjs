@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 const out = process.argv[2] || '.';
 const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
 const errors = [];
-for (const [lang, w] of [['en', 1100], ['ckb', 390], ['kmr', 390], ['ar', 1100]]) {
+for (const [lang, w] of [['en', 1100], ['ckb', 390], ['kmr', 390], ['badini', 390], ['ar', 1100]]) {
   const p = await b.newPage({ viewport: { width: w, height: 900 } });
   p.on('pageerror', (e) => errors.push(`${lang}: ${e.message}`));
   await p.goto('http://localhost:4173/');
@@ -25,6 +25,24 @@ for (const [lang, w] of [['en', 1100], ['ckb', 390], ['kmr', 390], ['ar', 1100]]
   const dir = await p.evaluate(() => document.documentElement.dir);
   const cards = await p.locator('.rec').count();
   console.log(lang, 'dir=', dir, 'cards=', cards, 'scrollW=', await p.evaluate(() => document.documentElement.scrollWidth), 'w=', w);
+  await p.close();
+}
+// Translation editor: edit a Sorani string, check it is used and survives a reload.
+{
+  const p = await b.newPage({ viewport: { width: 390, height: 900 } });
+  p.on('pageerror', (e) => errors.push(`editor: ${e.message}`));
+  await p.goto('http://localhost:4173/');
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('lang', 'ckb'); });
+  await p.reload();
+  await p.locator('[role=tab]').nth(3).click();
+  await p.locator('input[type=search]').fill('nav.learn');
+  await p.locator('.tr-row textarea').first().fill('فێربوون - تاقیکردنەوە');
+  const tab = await p.locator('[role=tab]').nth(1).textContent();
+  await p.reload();
+  await p.locator('[role=tab]').nth(3).click();
+  const after = await p.locator('[role=tab]').nth(1).textContent();
+  await p.screenshot({ path: `${out}/editor-ckb.png` });
+  console.log('editor: live=', tab, 'afterReload=', after, 'rows=', await p.locator('.tr-row').count(), 'scrollW=', await p.evaluate(() => document.documentElement.scrollWidth));
   await p.close();
 }
 console.log('errors:', errors);

@@ -72,7 +72,7 @@ export const AGENT_FOCUS: Record<string, string> = {
 export function systemPrompt(agent: string, languageName: string): string {
   return `${AGENT_FOCUS[agent] ?? AGENT_FOCUS.navigator}
 
-You are part of a public-health cancer screening guidance app for citizens of the Kurdistan Region of Iraq, used in English, Kurdish Sorani, Kurdish Kurmanji and Arabic. You speak as a careful medical doctor and cancer screening professional.
+You are part of a public-health cancer screening guidance app for citizens of the Kurdistan Region of Iraq, used in English, Kurdish Sorani, Kurdish Kurmanji, Kurdish Badini and Arabic. You speak as a careful medical doctor and cancer screening professional.
 
 Rules:
 - Always answer in ${languageName}, in plain language a non-medical person understands. Keep answers short (a few short paragraphs or a short list).

@@ -118,7 +118,7 @@ button {
 button:hover { border-color: var(--accent); }
 button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
-select, input[type='number'], input[type='password'], input[type='text'], textarea {
+select, input[type='number'], input[type='password'], input[type='text'], input[type='search'], textarea {
   background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
   padding: 10px 12px; min-height: 44px; width: 100%;
 }
@@ -210,3 +210,17 @@ summary { cursor: pointer; color: var(--info); font-weight: 600; }
   details { display: block; }
   details > * { display: block; }
 }
+
+/* Translation editor */
+.actions.wrap button { flex: 1 1 auto; }
+button.danger { color: var(--alert); border-color: var(--alert); }
+button.link { background: none; border: none; padding: 0 4px; color: var(--accent); text-decoration: underline; }
+.notice { color: var(--ok); font-weight: 600; margin: 8px 0 0; }
+.tr-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+.tr-row { padding: 10px 12px; }
+.tr-row.edited { border-inline-start: 4px solid var(--accent); }
+.tr-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 4px; }
+.tr-head code { font-size: 0.75rem; color: var(--muted); overflow-wrap: anywhere; }
+.tr-head .tag { font-size: 0.75rem; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 1px 8px; }
+.tr-ref { margin: 0 0 6px; color: var(--muted); font-size: 0.9rem; text-align: start; }
+.tr-row textarea { width: 100%; box-sizing: border-box; resize: vertical; }

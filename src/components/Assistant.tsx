@@ -10,6 +10,7 @@ const LANG_NAMES: Record<string, string> = {
   ar: 'Arabic',
   ckb: 'Central Kurdish (Sorani), in Arabic script',
   kmr: 'Northern Kurdish (Kurmanji), in Latin script',
+  badini: 'Kurdish Badini (Behdini dialect of Northern Kurdish, as spoken in Duhok), in Kurdish Arabic script',
 };
 
 function load(key: string, fallback: string): string {

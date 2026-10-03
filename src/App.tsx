@@ -7,8 +7,9 @@ import { Results } from './components/Results';
 import { Learn } from './components/Learn';
 import { Assistant } from './components/Assistant';
 import { About } from './components/About';
+import { TranslationEditor } from './components/TranslationEditor';
 
-type Tab = 'check' | 'learn' | 'assistant' | 'about';
+type Tab = 'check' | 'learn' | 'assistant' | 'translate' | 'about';
 
 function loadAnswers(): Answers {
   try {
@@ -60,7 +61,7 @@ export default function App() {
       </header>
 
       <nav className="tabs no-print" role="tablist">
-        {(['check', 'learn', 'assistant', 'about'] as Tab[]).map((id) => (
+        {(['check', 'learn', 'assistant', 'translate', 'about'] as Tab[]).map((id) => (
           <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>
             {t(`nav.${id}`)}
           </button>
@@ -91,6 +92,7 @@ export default function App() {
           ))}
         {tab === 'learn' && <Learn />}
         {tab === 'assistant' && <Assistant answers={answers} assessment={showResults ? assessment : null} />}
+        {tab === 'translate' && <TranslationEditor />}
         {tab === 'about' && <About />}
       </main>
     </div>

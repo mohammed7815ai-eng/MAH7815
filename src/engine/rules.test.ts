@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { assess, breast, cervical, colorectal, lung, packYears, prostate } from './rules';
 import { emptyAnswers, type Answers, type Msg } from './types';
 import { en } from '../i18n/en';
-import { DICTS } from '../i18n';
+import { DICTS, clearOverrides, effectiveDict, importOverrides, setOverride, translate } from '../i18n';
 
 const A = (o: Partial<Answers>): Answers => ({ ...emptyAnswers, ...o });
 
@@ -179,5 +179,28 @@ describe('i18n', () => {
         for (const ph of v.match(/\{\w+\}/g) ?? []) expect(dict[k as keyof typeof en], `${lang}:${k} ${ph}`).toContain(ph);
       }
     }
+  });
+  it('Badini is written in Arabic script (Latin only for acronyms and names)', () => {
+    const latinWords = Object.values(DICTS.badini).join(' ').replace(/\{\w+\}/g, '').match(/\b[a-zçêîşû]{3,}\b/g) ?? [];
+    expect(latinWords).toEqual([]);
+  });
+});
+
+describe('translation editor overrides', () => {
+  it('an edit replaces the built-in text and can be undone', () => {
+    setOverride('ckb', 'nav.learn', 'فێربوون');
+    expect(translate('ckb', 'nav.learn')).toBe('فێربوون');
+    setOverride('ckb', 'nav.learn', null);
+    expect(translate('ckb', 'nav.learn')).toBe(DICTS.ckb['nav.learn']);
+  });
+  it('import accepts a plain map or {strings}, ignores unknown keys and non-text', () => {
+    expect(importOverrides('ar', { 'nav.learn': 'تعلّم', 'no.such.key': 'x', 'nav.about': 5 })).toBe(1);
+    expect(importOverrides('ar', { strings: { 'nav.about': 'حول' } })).toBe(1);
+    expect(effectiveDict('ar')['nav.about']).toBe('حول');
+    clearOverrides('ar');
+    expect(translate('ar', 'nav.learn')).toBe(DICTS.ar['nav.learn']);
+  });
+  it('rejects files that are not a translation map', () => {
+    expect(() => importOverrides('kmr', [1, 2])).toThrow();
   });
 });

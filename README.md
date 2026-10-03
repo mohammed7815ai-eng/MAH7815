@@ -1,6 +1,6 @@
 # Cancer Screening Guide (Kurdistan Region)
 
-A citizen-facing cancer screening guidance app for the Kurdistan Region of Iraq, available as a website (installable, works offline), a Windows desktop app and an Android app, in **English, Kurdish Sorani, Kurdish Kurmanji and Arabic**.
+A citizen-facing cancer screening guidance app for the Kurdistan Region of Iraq, available as a website (installable, works offline), a Windows desktop app and an Android app, in **English, Kurdish Sorani, Kurdish Kurmanji, Kurdish Badini and Arabic**.
 
 ## What it does
 
@@ -21,7 +21,12 @@ A citizen-facing cancer screening guidance app for the Kurdistan Region of Iraq,
 
 All rules live in `src/engine/rules.ts`, sources in `src/engine/sources.ts`, tests in `src/engine/rules.test.ts`.
 
-**Translations** (`src/i18n/*.ts`) were machine-drafted and must be reviewed by native-speaking clinicians before public release. The test suite checks that every language has every key.
+## Translations
+
+- English (`src/i18n/en.ts`) is the reference. Every other language is one plain JSON file in `src/i18n/locales/` (`ckb.json` Sorani, `kmr.json` Kurmanji, `badini.json` Badini, `ar.json` Arabic) that anyone can edit.
+- **In the app**: the *Edit translations* tab lets a reviewer change any text. Edits are saved on the device and used immediately. *Download full language file* gives a file that can replace `src/i18n/locales/<lang>.json` directly; *Load a translation file* imports one (full file or just the changes). On Android, use *Copy full language file* and paste it into an email or message.
+- Badini (`badini.json`) was drafted by transliterating Kurmanji into Kurdish Arabic script (`node scripts/kmr-to-badini.mjs`; re-running it overwrites the file, so stop using it once Badini has been edited by hand).
+- All Kurdish and Arabic text was machine-drafted and must be reviewed by native-speaking clinicians before public release. The test suite checks that every language has every key and keeps every `{placeholder}`.
 
 ## Develop
 
@@ -34,7 +39,7 @@ npm run build      # web build in dist/ (PWA, works offline)
 
 ## Build the apps
 
-GitHub Actions (`.github/workflows/build.yml`) builds everything on every push to `main`:
+GitHub Actions (`.github/workflows/build.yml`) builds everything on every push to `main` (or the `cancer-screening-app` branch):
 
 - **Web**: `dist/` artifact, deployed to GitHub Pages (enable Pages → Source: GitHub Actions once).
 - **Windows**: `release/*.exe` (installer + portable) via Electron.
