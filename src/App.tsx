@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { LANGS, useI18n, type Lang } from './i18n';
 import { assess } from './engine/rules';
 import { emptyAnswers, type Answers } from './engine/types';
@@ -37,6 +37,14 @@ export default function App() {
     }
   };
 
+  // Pink theme for women, blue for men (set on <html> so the whole page background changes).
+  useEffect(() => {
+    if (answers.sex) document.documentElement.dataset.sex = answers.sex;
+    else delete document.documentElement.dataset.sex;
+  }, [answers.sex]);
+
+  const tabs: Tab[] = ['check', 'learn', ...(__AI_ASSISTANT__ ? (['assistant'] as Tab[]) : []), ...(__TRANSLATION_EDITOR__ ? (['translate'] as Tab[]) : []), 'about'];
+
   return (
     <div className="app">
       <header className="topbar no-print">
@@ -61,12 +69,18 @@ export default function App() {
       </header>
 
       <nav className="tabs no-print" role="tablist">
-        {(['check', 'learn', 'assistant', 'translate', 'about'] as Tab[]).map((id) => (
+        {tabs.map((id) => (
           <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>
             {t(`nav.${id}`)}
           </button>
         ))}
       </nav>
+
+      {answers.sex && (
+        <p className="care no-print" role="note">
+          <span aria-hidden>♥</span> {t(answers.sex === 'male' ? 'care.male' : 'care.female')}
+        </p>
+      )}
 
       <div className="disclaimer no-print">{t('disclaimer.short')} {t('privacy.short')}</div>
 
@@ -91,8 +105,8 @@ export default function App() {
             />
           ))}
         {tab === 'learn' && <Learn />}
-        {tab === 'assistant' && <Assistant answers={answers} assessment={showResults ? assessment : null} />}
-        {tab === 'translate' && <TranslationEditor />}
+        {__AI_ASSISTANT__ && tab === 'assistant' && <Assistant answers={answers} assessment={showResults ? assessment : null} />}
+        {__TRANSLATION_EDITOR__ && tab === 'translate' && <TranslationEditor />}
         {tab === 'about' && <About />}
       </main>
     </div>

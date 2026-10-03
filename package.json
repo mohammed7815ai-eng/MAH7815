@@ -1,12 +1,13 @@
 {
   "name": "cancer-screening-guide",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Cancer screening guidance (KRG MOH 2023) for web, Windows and Android in English, Sorani, Kurmanji and Arabic",
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:electron": "vite build --mode electron --outDir dist-electron",
+    "build:embed": "vite build --mode embed --outDir dist-embed",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "preview": "vite preview",

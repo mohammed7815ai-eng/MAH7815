@@ -9,7 +9,7 @@ export function About() {
       <section className="card">
         <p>{t('about.body')}</p>
         <p><strong>{t('about.disclaimer')}</strong></p>
-        <p>{t('about.privacy')}</p>
+        <p>{t(__AI_ASSISTANT__ ? 'about.privacy' : 'about.privacyLocal')}</p>
         <p className="muted">{t('about.translation')}</p>
       </section>
       <section className="card">

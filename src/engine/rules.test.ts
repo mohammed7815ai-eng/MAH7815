@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { assess, breast, cervical, colorectal, lung, packYears, prostate } from './rules';
+import { agePercent, screeningWindows } from './timeline';
 import { emptyAnswers, type Answers, type Msg } from './types';
 import { en } from '../i18n/en';
 import { DICTS, clearOverrides, effectiveDict, importOverrides, setOverride, translate } from '../i18n';
@@ -202,5 +203,35 @@ describe('translation editor overrides', () => {
   });
   it('rejects files that are not a translation map', () => {
     expect(() => importOverrides('kmr', [1, 2])).toThrow();
+  });
+});
+
+describe('screening age chart', () => {
+  const rows = (o: Partial<Answers>) => {
+    const a = A(o);
+    return screeningWindows(a, assess(a));
+  };
+  it('average-risk woman: breast 45-69, cervical 30-69, bowel 45-75, lung only if eligible', () => {
+    const r = rows({ age: 50, sex: 'female' });
+    expect(r.map((w) => [w.cancer, w.from, w.to])).toEqual([['breast', 45, 69], ['cervical', 30, 69], ['colorectal', 45, 75], ['lung', 55, 70]]);
+    expect(r.find((w) => w.cancer === 'lung')!.applies).toBe(false);
+  });
+  it('BRCA carrier: breast from 30', () => {
+    expect(rows({ age: 33, sex: 'female', geneticMutation: true })[0].from).toBe(30);
+  });
+  it('man with FDR bowel cancer at 45: colonoscopy from 35; prostate from 45 with risk', () => {
+    const r = rows({ age: 50, sex: 'male', crcFamily: 'fdrUnder60', youngestDxAge: 45, familyProstateOrOther: true });
+    expect(r.find((w) => w.cancer === 'colorectal')!.from).toBe(35);
+    expect(r.find((w) => w.cancer === 'prostate')!.from).toBe(45);
+    expect(r.some((w) => w.cancer === 'breast')).toBe(false);
+  });
+  it('heavy smoker 60: lung applies', () => {
+    expect(rows({ age: 60, sex: 'male', smoking: 'current', cigarettesPerDay: 40, smokingYears: 30 }).find((w) => w.cancer === 'lung')!.applies).toBe(true);
+  });
+  it('maps ages onto the axis', () => {
+    expect(agePercent(20)).toBe(0);
+    expect(agePercent(90)).toBe(100);
+    expect(agePercent(10)).toBe(0);
+    expect(agePercent(55)).toBe(50);
   });
 });

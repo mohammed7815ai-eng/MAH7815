@@ -1,5 +1,6 @@
 import { useI18n } from '../i18n';
 import { SOURCES } from '../engine/sources';
+import { Charts } from './Charts';
 import type { Answers, Assessment, Recommendation } from '../engine/types';
 
 const ICON: Record<Recommendation['status'], string> = {
@@ -32,6 +33,8 @@ export function Results({ answers, assessment, onEdit, onAskAi }: {
           <strong>⚠</strong> {t('results.urgent')}
         </div>
       )}
+
+      <Charts answers={answers} assessment={assessment} />
 
       {recs.map((r) => (
         <article key={r.cancer} className={`card rec status-${r.status}`}>
@@ -73,13 +76,18 @@ export function Results({ answers, assessment, onEdit, onAskAi }: {
         </article>
       ))}
 
+      <div className="card thanks" role="status">
+        <span aria-hidden>♥</span>
+        <p>{t(answers.sex === 'male' ? 'thanks.male' : 'thanks.female')}</p>
+      </div>
+
       <p className="muted small">{t('results.footer')}</p>
       <p className="muted small">{t('about.disclaimer')}</p>
 
       <div className="actions no-print">
         <button className="primary" onClick={onEdit}>{t('results.edit')}</button>
         <button onClick={() => window.print()}>{t('results.print')}</button>
-        <button onClick={onAskAi}>{t('results.askAi')}</button>
+        {__AI_ASSISTANT__ && <button onClick={onAskAi}>{t('results.askAi')}</button>}
       </div>
     </div>
   );

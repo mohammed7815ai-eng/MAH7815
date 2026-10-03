@@ -5,3 +5,4 @@ release/
 android/
 *.log
 .DS_Store
+dist-embed

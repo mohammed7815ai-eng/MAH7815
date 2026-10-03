@@ -9,6 +9,29 @@ on:
 
 permissions:
   contents: write
+  website:
+    # Public website for the app branch: published to the gh-pages branch (GitHub Pages, served through a CDN).
+    # If CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets are set, also deploys to Cloudflare Pages
+    # (unlimited bandwidth; recommended for national-scale traffic).
+    needs: web
+    if: github.ref == 'refs/heads/cancer-screening-app'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: web-build, path: site }
+      - run: touch site/.nojekyll
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site
+          publish_branch: gh-pages
+      - name: Cloudflare Pages (optional)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: npx --yes wrangler@4 pages deploy site --project-name cancer-screening-guide --branch main
+
   pages: write
   id-token: write
 
@@ -29,6 +52,29 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main'
         with: { path: dist }
+
+  website:
+    # Public website for the app branch: published to the gh-pages branch (GitHub Pages, served through a CDN).
+    # If CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets are set, also deploys to Cloudflare Pages
+    # (unlimited bandwidth; recommended for national-scale traffic).
+    needs: web
+    if: github.ref == 'refs/heads/cancer-screening-app'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: web-build, path: site }
+      - run: touch site/.nojekyll
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site
+          publish_branch: gh-pages
+      - name: Cloudflare Pages (optional)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: npx --yes wrangler@4 pages deploy site --project-name cancer-screening-guide --branch main
 
   pages:
     # Publishes the web app on GitHub Pages. Enable Pages (Settings > Pages > Source: GitHub Actions) once.
