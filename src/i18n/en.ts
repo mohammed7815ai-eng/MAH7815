@@ -44,7 +44,7 @@ export const en = {
   'form.limited': 'Has a doctor told you that you have a serious illness that limits your life expectancy to less than 10 years, or that would make cancer surgery impossible?',
   'form.breastSection': 'Breast health',
   'form.personalBreastCancer': 'I have had breast cancer before',
-  'form.familyBreastOvarian': 'My mother, sister or daughter, several relatives on one side of the family, or a male relative has had breast or ovarian cancer',
+  'form.familyBreastOvarian': 'My mother, sister or daughter, several relatives on one side of the family or ovarian cancer, or a male relative has had breast',
   'form.geneticMutation': 'I or a close relative carry a BRCA1/BRCA2 or another cancer-related gene mutation',
   'form.chestRadiation': 'I had radiation therapy to the chest between ages 10 and 30 (for example for Hodgkin lymphoma)',
   'form.highRiskLesion': 'A previous breast biopsy showed atypical hyperplasia (ADH/ALH) or lobular carcinoma in situ (LCIS)',
