@@ -156,6 +156,17 @@ legend { padding: 0; margin-bottom: 6px; }
 .ynu { display: flex; flex-wrap: wrap; gap: 8px; }
 .ynu legend { width: 100%; }
 
+/* Yes / No risk-factor rows */
+.yesno {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.yesno:last-of-type { border-bottom: none; }
+.yesno .q { flex: 1 1 260px; font-size: 0.97rem; line-height: 1.45; }
+.yesno .pills { flex: none; gap: 6px; }
+.yesno .pill span { min-width: 64px; text-align: center; padding: 7px 14px; }
+.yesno .pill.yes input:checked + span { background: var(--accent); color: var(--on-accent, #fff); }
+
 .check { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; cursor: pointer; }
 .check input { width: 20px; height: 20px; margin-top: 3px; flex: none; accent-color: var(--accent); }
 .hint { color: var(--info); font-weight: 600; margin: 0 0 8px; }
@@ -319,3 +330,11 @@ button.share { display: inline-flex; align-items: center; gap: 8px; color: var(-
 .hero figcaption { padding: 10px 14px; font-weight: 700; color: var(--accent); text-align: center; font-size: 1.05rem; }
 @media (max-width: 480px) { .hero svg { aspect-ratio: 16 / 9; } }
 @media print { .hero { display: none; } }
+
+/* Settings: server link */
+.server-form input[type='url'] { width: 100%; padding: 10px 12px; font: inherit; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); }
+.saved { color: var(--ok, #1d7a46); font-weight: 600; }
+.sync { font-size: 0.9rem; margin: 8px 0; }
+.sync-sent { color: var(--ok, #1d7a46); }
+.sync-failed { color: var(--alert); }
+.sync-sending { color: var(--muted, #666); }

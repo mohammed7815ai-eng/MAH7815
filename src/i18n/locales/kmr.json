@@ -289,5 +289,17 @@
   "share.button": "Vê rêberê parve bike",
   "share.copied": "Girêdan hat kopîkirin. Ji bo parvekirinê di her sepanekê de bi cih bike.",
   "share.text": "Fêr bibe kîjan pişkinînên penceşêrê ji te re guncaw in, li gorî rêbernameyên Herêma Kurdistanê.",
-  "hero.caption": "Pêşerojeke saxlemtir ji bo civaka me bi pişkinîna zû dest pê dike"
+  "hero.caption": "Pêşerojeke saxlemtir ji bo civaka me bi pişkinîna zû dest pê dike",
+  "nav.settings": "Mîheng",
+  "settings.title": "Mîheng",
+  "settings.serverLink": "Girêdana serverê",
+  "settings.serverHint": "Dema ku girêdana serverê tê tomarkirin, her nirxandineke temam wekî tomareke bênav jê re tê şandin (temen, zayend, bersiv û encam; bê nav an agahiyên têkiliyê). Girêdaneke https bi kar bîne. Ji bo rawestandina şandinê, vala bihêle û tomar bike.",
+  "settings.save": "Tomar bike",
+  "settings.saved": "Girêdana serverê hate tomarkirin.",
+  "settings.cleared": "Girêdana serverê hate rakirin. Encam nayên şandin.",
+  "settings.invalid": "Ji kerema xwe girêdaneke derbasdar binivîse ku bi https:// an http:// dest pê dike",
+  "sync.sending": "Encamên bênav ji serverê re tên şandin…",
+  "sync.sent": "✓ Encamên bênav ji serverê re hatin şandin.",
+  "sync.failed": "Negihîşt serverê. Encamên te hîn li vir tên nîşandan.",
+  "privacy.server": "Encamên bênav (bê nav an agahiyên têkiliyê) ji serverê karûbarê tenduristiyê re tên şandin."
 }

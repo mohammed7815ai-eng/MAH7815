@@ -10,8 +10,10 @@ import { About } from './components/About';
 import { TranslationEditor } from './components/TranslationEditor';
 import { KurdistanFlag } from './components/KurdistanFlag';
 import { Footer } from './components/Footer';
+import { Settings } from './components/Settings';
+import { getServerLink, sendAssessment, type SendStatus } from './server';
 
-type Tab = 'check' | 'learn' | 'assistant' | 'translate' | 'about';
+type Tab = 'check' | 'learn' | 'assistant' | 'translate' | 'settings' | 'about';
 
 function loadAnswers(): Answers {
   try {
@@ -28,6 +30,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('check');
   const [answers, setAnswersState] = useState<Answers>(loadAnswers);
   const [showResults, setShowResults] = useState(false);
+  const [sendStatus, setSendStatus] = useState<SendStatus | null>(null);
   const assessment = useMemo(() => (answers.age != null && answers.sex != null ? assess(answers) : null), [answers]);
 
   const setAnswers = (a: Answers) => {
@@ -45,7 +48,7 @@ export default function App() {
     else delete document.documentElement.dataset.sex;
   }, [answers.sex]);
 
-  const tabs: Tab[] = ['check', 'learn', ...(__AI_ASSISTANT__ ? (['assistant'] as Tab[]) : []), ...(__TRANSLATION_EDITOR__ ? (['translate'] as Tab[]) : []), 'about'];
+  const tabs: Tab[] = ['check', 'learn', ...(__AI_ASSISTANT__ ? (['assistant'] as Tab[]) : []), ...(__TRANSLATION_EDITOR__ ? (['translate'] as Tab[]) : []), ...(__SERVER_SETTINGS__ ? (['settings'] as Tab[]) : []), 'about'];
 
   return (
     <div className="app">
@@ -81,7 +84,7 @@ export default function App() {
         </p>
       )}
 
-      <div className="disclaimer no-print">{t('disclaimer.short')} {t('privacy.short')}</div>
+      <div className="disclaimer no-print">{t('disclaimer.short')} {t(__SERVER_SETTINGS__ && getServerLink() ? 'privacy.server' : 'privacy.short')}</div>
 
       <main>
         {tab === 'check' &&
@@ -89,6 +92,7 @@ export default function App() {
             <Results
               answers={answers}
               assessment={assessment}
+              sendStatus={sendStatus}
               onEdit={() => setShowResults(false)}
               onAskAi={() => setTab('assistant')}
             />
@@ -98,6 +102,11 @@ export default function App() {
               onChange={setAnswers}
               onSubmit={() => {
                 setShowResults(true);
+                const link = __SERVER_SETTINGS__ ? getServerLink() : '';
+                if (link && answers.age != null && answers.sex != null) {
+                  setSendStatus('sending');
+                  sendAssessment(link, answers, assess(answers), lang).then(setSendStatus);
+                } else setSendStatus(null);
                 window.scrollTo({ top: 0 });
               }}
               onReset={() => setAnswers(emptyAnswers)}
@@ -106,6 +115,7 @@ export default function App() {
         {tab === 'learn' && <Learn />}
         {__AI_ASSISTANT__ && tab === 'assistant' && <Assistant answers={answers} assessment={showResults ? assessment : null} />}
         {__TRANSLATION_EDITOR__ && tab === 'translate' && <TranslationEditor />}
+        {__SERVER_SETTINGS__ && tab === 'settings' && <Settings />}
         {tab === 'about' && <About />}
       </main>
 

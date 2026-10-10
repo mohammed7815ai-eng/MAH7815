@@ -42,7 +42,8 @@ npm run build      # web build in dist/ (PWA, works offline)
 GitHub Actions (`.github/workflows/build.yml`) builds everything on every push to `main` (or the `cancer-screening-app` branch):
 
 - **Web**: `dist/` artifact, deployed to GitHub Pages (enable Pages → Source: GitHub Actions once).
-- **Windows**: `release/*.exe` (installer + portable) via Electron.
+- **Windows**: `release/Cancer-Screening-Guide-Setup-<version>.exe` (NSIS installer: licence page, English/Arabic, choice of folder, Start menu and desktop shortcuts, uninstaller) and `release/Cancer-Screening-Guide-Portable-<version>.exe`, via Electron.
+- **Settings** (Windows/Android): a server link; when saved, each completed assessment is POSTed there as anonymous JSON (see `src/server.ts`).
 - **Android**: `CancerScreeningGuide.apk` (debug-signed) via Capacitor.
 
 Push a tag like `v1.0.0` to attach all three to a GitHub Release.

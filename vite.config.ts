@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __TRANSLATION_EDITOR__: JSON.stringify(mode === 'electron'),
+    __SERVER_SETTINGS__: JSON.stringify(mode === 'electron'),
     // The AI assistant needs a personal API key; hidden for now (code kept in src/components/Assistant.tsx).
     __AI_ASSISTANT__: JSON.stringify(false),
   },

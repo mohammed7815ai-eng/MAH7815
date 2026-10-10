@@ -125,7 +125,7 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: Cancer Screening Guide ${{ steps.version.outputs.tag }}
           body: |
-            Windows: download the Setup .exe (installer) or the portable .exe.
+            Windows: download Cancer-Screening-Guide-Setup (installer with Start menu and desktop shortcuts) or the Portable .exe (runs without installing).
             Android: download CancerScreeningGuide.apk on the phone and open it (allow installing from this source when asked).
             Web: unzip CancerScreeningGuide-web.zip and host it, or open index.html.
             Kurdish and Arabic texts are machine-drafted; use the Edit translations tab to correct them.

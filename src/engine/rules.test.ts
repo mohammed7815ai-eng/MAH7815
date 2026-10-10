@@ -182,7 +182,7 @@ describe('i18n', () => {
     }
   });
   it('Badini is written in Arabic script (Latin only for acronyms and names)', () => {
-    const latinWords = Object.values(DICTS.badini).join(' ').replace(/\{\w+\}/g, '').match(/\b[a-zçêîşû]{3,}\b/g) ?? [];
+    const latinWords = Object.values(DICTS.badini).join(' ').replace(/\{\w+\}/g, '').replace(/\bhttps?\b/g, '').match(/\b[a-zçêîşû]{3,}\b/g) ?? [];
     expect(latinWords).toEqual([]);
   });
 });

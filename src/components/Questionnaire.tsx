@@ -26,23 +26,33 @@ export function Questionnaire({ answers, onChange, onSubmit, onReset }: {
   const set = <K extends keyof Answers>(k: K, v: Answers[K]) => onChange({ ...answers, [k]: v });
   const num = (s: string): number | null => (s.trim() === '' || isNaN(Number(s)) ? null : Number(s));
 
+  // Each risk factor is answered with explicit Yes / No buttons (default No).
   const check = (k: BoolKey, label: string) => (
-    <label className="check" key={k}>
-      <input type="checkbox" checked={answers[k] as boolean} onChange={(e) => set(k, e.target.checked as Answers[typeof k])} />
-      <span>{label}</span>
-    </label>
+    <div className="yesno" key={k}>
+      <span className="q" id={`q-${k}`}>{label}</span>
+      <div className="pills" role="radiogroup" aria-labelledby={`q-${k}`}>
+        {([true, false] as const).map((v) => (
+          <label key={String(v)} className={`pill ${v ? 'yes' : 'no'}`}>
+            <input type="radio" name={k} checked={answers[k] === v} onChange={() => set(k, v as Answers[typeof k])} />
+            <span>{t(v ? 'yn.yes' : 'yn.no')}</span>
+          </label>
+        ))}
+      </div>
+    </div>
   );
 
   const ynu = (k: 'lifetimeRisk20' | 'gail5yr17' | 'tammemagi2' | 'sexuallyActive', label: string) => (
-    <fieldset className="ynu">
-      <legend>{label}</legend>
-      {(['yes', 'no', 'unknown'] as YesNoUnknown[]).map((v) => (
-        <label key={v} className="pill">
-          <input type="radio" name={k} checked={answers[k] === v} onChange={() => set(k, v)} />
-          <span>{t(`yn.${v}`)}</span>
-        </label>
-      ))}
-    </fieldset>
+    <div className="yesno">
+      <span className="q" id={`q-${k}`}>{label}</span>
+      <div className="pills" role="radiogroup" aria-labelledby={`q-${k}`}>
+        {(['yes', 'no', 'unknown'] as YesNoUnknown[]).map((v) => (
+          <label key={v} className={`pill ${v === 'yes' ? 'yes' : ''}`}>
+            <input type="radio" name={k} checked={answers[k] === v} onChange={() => set(k, v)} />
+            <span>{t(`yn.${v}`)}</span>
+          </label>
+        ))}
+      </div>
+    </div>
   );
 
 

@@ -1,0 +1,16 @@
+Cancer Screening Guide
+Developed by: Dr. Mohammed A Hassan
+
+TERMS OF USE
+
+1. Purpose. This application gives general information about cancer screening based on the Kurdistan Regional Government (KRG) Ministry of Health Cancer Screening Clinical Practice Guidelines (2023, V01), with supporting evidence from WHO, IARC, NHS and CDC.
+
+2. Not medical advice. The application does not diagnose, treat or replace a consultation with a qualified health professional. Recommendations depend on the accuracy of the answers given. Anyone with symptoms should see a doctor promptly.
+
+3. Privacy. Answers are processed on this computer. If an administrator saves a server link in Settings, each completed assessment is sent to that server as an anonymous record (age, sex, answers and results, with no name or contact details).
+
+4. Translations. The Kurdish (Sorani, Kurmanji, Badini) and Arabic texts should be reviewed by native-speaking clinicians and can be corrected in the Edit translations tab.
+
+5. No warranty. The application is provided "as is", without warranty of any kind. The developer is not liable for any decision made on the basis of its content.
+
+By clicking "I Agree" you accept these terms.

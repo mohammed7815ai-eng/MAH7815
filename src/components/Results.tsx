@@ -2,6 +2,7 @@ import { useI18n } from '../i18n';
 import { SOURCES } from '../engine/sources';
 import { Charts } from './Charts';
 import type { Answers, Assessment, Recommendation } from '../engine/types';
+import type { SendStatus } from '../server';
 
 const ICON: Record<Recommendation['status'], string> = {
   recommended: '✓',
@@ -12,9 +13,10 @@ const ICON: Record<Recommendation['status'], string> = {
   notApplicable: '–',
 };
 
-export function Results({ answers, assessment, onEdit, onAskAi }: {
+export function Results({ answers, assessment, sendStatus, onEdit, onAskAi }: {
   answers: Answers;
   assessment: Assessment;
+  sendStatus?: SendStatus | null;
   onEdit: () => void;
   onAskAi: () => void;
 }) {
@@ -80,6 +82,8 @@ export function Results({ answers, assessment, onEdit, onAskAi }: {
         <span aria-hidden>♥</span>
         <p>{t(answers.sex === 'male' ? 'thanks.male' : 'thanks.female')}</p>
       </div>
+
+      {sendStatus && <p className={`sync sync-${sendStatus}`} role="status">{t(`sync.${sendStatus}`)}</p>}
 
       <p className="muted small">{t('results.footer')}</p>
       <p className="muted small">{t('about.disclaimer')}</p>

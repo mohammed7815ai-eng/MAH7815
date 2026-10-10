@@ -12,7 +12,7 @@ for (const [lang, w] of [['en', 1100], ['ckb', 390], ['kmr', 390], ['badini', 39
   await p.waitForLoadState('networkidle');
   await p.fill('input[type=number]', '52');
   await p.locator('input[name=sex]').first().check({ force: true });
-  await p.locator('label.check').nth(3).click(); // family history breast
+  await p.locator('input[name=familyBreastOvarian]').first().check({ force: true }); // family history breast: Yes
   await p.locator('input[name=smoking]').nth(1).check({ force: true });
   const nums = p.locator('input[type=number]');
   await nums.nth(1).fill('30');
