@@ -49,7 +49,12 @@ export interface Answers {
   youngestDxAge: number | null;
   ibd: boolean;
   personalPolypsOrCrc: boolean;
+
+  /** Sections where the person confirmed "I do not have any of the above" (all items in that section set to No). */
+  noneOfAbove: Partial<Record<FormSectionId, boolean>>;
 }
+
+export type FormSectionId = 'basics' | 'breast' | 'cervical' | 'colorectal' | 'lung' | 'prostate';
 
 export const emptyAnswers: Answers = {
   age: null,
@@ -85,6 +90,7 @@ export const emptyAnswers: Answers = {
   youngestDxAge: null,
   ibd: false,
   personalPolypsOrCrc: false,
+  noneOfAbove: {},
 };
 
 export type CancerId = 'breast' | 'lung' | 'prostate' | 'cervical' | 'colorectal';

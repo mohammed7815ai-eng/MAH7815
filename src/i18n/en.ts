@@ -47,6 +47,9 @@ export const en = {
 
   // Form
   'form.intro': 'Answer a few questions. The tool applies the Kurdistan screening guidelines to your answers and shows which screening tests are recommended for you.',
+  'form.noneBasics': "I do not have any of the above health problems",
+  'form.noneBreast': "I do not have any of the above",
+  'form.noneIssues': "I do not have any of the above health issues",
   'form.basics': 'About you',
   'form.age': 'Age (years)',
   'form.sex': 'Sex',
@@ -60,8 +63,8 @@ export const en = {
   'form.geneticMutation': 'I or a close relative carry a BRCA1/BRCA2 or another cancer-related gene mutation',
   'form.chestRadiation': 'I had radiation therapy to the chest between ages 10 and 30 (for example for Hodgkin lymphoma)',
   'form.highRiskLesion': 'A previous breast biopsy showed atypical hyperplasia (ADH/ALH) or lobular carcinoma in situ (LCIS)',
-  'form.lifetimeRisk20': 'Has a doctor calculated your lifetime breast cancer risk as 20% or more?',
-  'form.gail': 'Has a doctor calculated your 5-year breast cancer risk (Gail model) as 1.7% or more?',
+  'form.lifetimeRisk20': "Has a doctor told you that your lifetime risk of breast cancer is high?",
+  'form.gail': "Has a doctor told you that your 5-year breast cancer risk (Gail model) is high?",
   'yn.yes': 'Yes',
   'yn.no': 'No',
   'yn.unknown': "Don't know",
