@@ -18,50 +18,11 @@
   --neutral-soft: #eef0f3;
   --radius: 12px;
   --font: 'Noto Sans', 'Noto Sans Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #12161c;
-    --surface: #1b2129;
-    --text: #e7ebf0;
-    --muted: #9aa5b2;
-    --border: #2d3540;
-    --accent: #e0669f;
-    --accent-soft: #3a1f2c;
-    --on-accent: #1b0d14;
-    --ok: #5fcf95;
-    --ok-soft: #173326;
-    --warn: #f0b456;
-    --warn-soft: #382a12;
-    --alert: #ff8a80;
-    --alert-soft: #3b1a18;
-    --info: #8db6f2;
-    --info-soft: #1a2940;
-    --neutral-soft: #242b35;
-    color-scheme: dark;
-  }
-}
-:root[data-theme='dark'] {
-  --bg: #12161c;
-  --surface: #1b2129;
-  --text: #e7ebf0;
-  --muted: #9aa5b2;
-  --border: #2d3540;
-  --accent: #e0669f;
-  --accent-soft: #3a1f2c;
-  --on-accent: #1b0d14;
-  color-scheme: dark;
+  color-scheme: light only;
 }
 /* Background by sex: pink for women, blue for men */
 :root[data-sex='female'] { --bg: #fbe1ec; }
 :root[data-sex='male'] { --bg: #dcebfb; --accent: #1f5fae; --accent-soft: #dde9f8; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light'])[data-sex='female'] { --bg: #2b1522; }
-  :root:not([data-theme='light'])[data-sex='male'] { --bg: #0f1d2f; --accent: #7fb0ee; --accent-soft: #1b2c44; --on-accent: #0b1626; }
-}
-:root[data-theme='dark'][data-sex='female'] { --bg: #2b1522; }
-:root[data-theme='dark'][data-sex='male'] { --bg: #0f1d2f; --accent: #7fb0ee; --accent-soft: #1b2c44; --on-accent: #0b1626; }
 body { transition: background-color 0.3s; }
 
 [dir='rtl'] {

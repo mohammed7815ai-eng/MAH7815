@@ -96,6 +96,13 @@ jobs:
       # Same build as the desktop app: no service worker inside the Android WebView.
       - run: npm run build:electron
       - run: npx cap add android
+      # Always light: use a light app theme and stop Android from auto-darkening the page in dark mode.
+      - name: Force light theme
+        run: |
+          f=android/app/src/main/res/values/styles.xml
+          sed -i 's/DayNight/Light/g' "$f"
+          sed -i '/<style name="AppTheme[^"]*"/a\        <item name="android:forceDarkAllowed">false</item>' "$f"
+          grep -n 'forceDarkAllowed\|parent=' "$f"
       - name: App icons
         continue-on-error: true
         run: npx --yes @capacitor/assets generate --android --iconBackgroundColor '#b0306a'

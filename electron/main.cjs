@@ -1,8 +1,10 @@
 // Windows desktop shell: loads the offline web build from disk.
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, nativeTheme, shell } = require('electron');
 const path = require('path');
 
 app.setAppUserModelId('krd.health.cancerscreening');
+// Always light, even when Windows is set to dark mode.
+nativeTheme.themeSource = 'light';
 
 // One running copy only: a second launch focuses the existing window.
 if (!app.requestSingleInstanceLock()) app.quit();
