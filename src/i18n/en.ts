@@ -13,7 +13,7 @@ export const en = {
   'settings.save': "Save",
   'settings.saved': "Server link saved.",
   'settings.cleared': "Server link removed. Results will not be sent.",
-  'settings.invalid': "Please enter a valid link starting with https:// or http://",
+  'settings.invalid': "Please enter a valid secure link starting with https://",
   'sync.sending': "Sending anonymous results to the server…",
   'sync.sent': "✓ Anonymous results sent to the server.",
   'sync.failed': "Could not reach the server. Your results are still shown here.",
@@ -43,7 +43,6 @@ export const en = {
   'tr.review': "The Kurdish and Arabic texts were drafted by machine. Please correct anything that is wrong or unclear and send the file to the developers.",
   'lang.label': 'Language',
   'disclaimer.short': 'General information only, not a diagnosis. Always confirm with a doctor.',
-  'privacy.short': 'Your answers stay on this device.',
 
   // Form
   'form.intro': 'Answer a few questions. The tool applies the Kurdistan screening guidelines to your answers and shows which screening tests are recommended for you.',
@@ -321,6 +320,7 @@ export const en = {
   'care.male': "You're important, so take care of your health",
   'thanks.female': "Thank you for taking the time to look after your health. We wish you a long and healthy life.",
   'thanks.male': "Thank you for taking the time to look after your health. We wish you a long and healthy life.",
+  'about.privacySecure': "Privacy: no name or contact details are collected, saved answers are encrypted on this device, and all connections use https.",
   'about.privacyLocal': "Privacy: your answers are processed on your device and never uploaded.",
   'footer.developedBy': "Developed by:",
   'share.button': "Share this guide",

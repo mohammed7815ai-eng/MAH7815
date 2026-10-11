@@ -30,7 +30,6 @@
   "tr.review": "Nivîsên Kurdî û Erebî bi makîneyê hatine amadekirin. Ji kerema xwe her tiştê şaş an ne zelal rast bike û pelê ji pêşdebiran re bişîne.",
   "lang.label": "Ziman",
   "disclaimer.short": "Tenê agahiyên giştî ne, ne teşhîs e. Her tim bi bijîşk re piştrast bike.",
-  "privacy.short": "Bersivên te tenê li ser vê amûrê dimînin.",
   "form.intro": "Bersiva çend pirsan bide. Ev amûr rêbernameyên pişkinînê yên Herêma Kurdistanê li ser bersivên te bi kar tîne û nîşan dide ka kîjan pişkinîn ji te re têne pêşniyar kirin.",
   "form.basics": "Derbarê te",
   "form.age": "Temen (sal)",
@@ -297,12 +296,13 @@
   "settings.save": "Tomar bike",
   "settings.saved": "Girêdana serverê hate tomarkirin.",
   "settings.cleared": "Girêdana serverê hate rakirin. Encam nayên şandin.",
-  "settings.invalid": "Ji kerema xwe girêdaneke derbasdar binivîse ku bi https:// an http:// dest pê dike",
+  "settings.invalid": "Ji kerema xwe girêdaneke ewle û derbasdar binivîse ku bi https:// dest pê dike",
   "sync.sending": "Encamên bênav ji serverê re tên şandin…",
   "sync.sent": "✓ Encamên bênav ji serverê re hatin şandin.",
   "sync.failed": "Negihîşt serverê. Encamên te hîn li vir tên nîşandan.",
   "privacy.server": "Encamên bênav (bê nav an agahiyên têkiliyê) ji serverê karûbarê tenduristiyê re tên şandin.",
   "form.noneBasics": "Tu ji van pirsgirêkên tenduristiyê yên li jor tune ne",
   "form.noneBreast": "Tu ji yên li jor tune ne",
-  "form.noneIssues": "Tu ji van kêşeyên tenduristiyê yên li jor tune ne"
+  "form.noneIssues": "Tu ji van kêşeyên tenduristiyê yên li jor tune ne",
+  "about.privacySecure": "Nihênî: tu nav an agahiyên têkiliyê nayên berhevkirin, bersivên tomarkirî li ser vê amûrê şîfrekirî ne, û hemû girêdan https bi kar tînin."
 }

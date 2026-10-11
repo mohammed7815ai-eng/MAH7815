@@ -1,7 +1,39 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import pkg from './package.json' with { type: 'json' };
+
+const NOTICE = `/*! Cancer Screening Guide v${pkg.version} - Copyright (c) 2026 Dr. Mohammed A Hassan. All rights reserved. Unauthorised copying, modification or redistribution is prohibited. */`;
+
+// Strict Content-Security-Policy for the public website: only this site's own files may run or be fetched.
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "manifest-src 'self'",
+  "worker-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'none'",
+  'upgrade-insecure-requests',
+].join('; ');
+
+function webSecurity(enabled: boolean): Plugin {
+  return {
+    name: 'web-security',
+    apply: 'build',
+    transformIndexHtml(html) {
+      if (!enabled) return html;
+      return html.replace(
+        '<meta charset="UTF-8" />',
+        `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${CSP}" />\n    <meta name="referrer" content="no-referrer" />`,
+      );
+    },
+  };
+}
 
 // Modes:
 //   (default)  public website: installable PWA, no translation editor
@@ -18,8 +50,13 @@ export default defineConfig(({ mode }) => {
     // The AI assistant needs a personal API key; hidden for now (code kept in src/components/Assistant.tsx).
     __AI_ASSISTANT__: JSON.stringify(false),
   },
+  build: {
+    sourcemap: false,
+    rollupOptions: { output: { postBanner: NOTICE } },
+  },
   plugins: [
     react(),
+    webSecurity(mode !== 'electron' && mode !== 'embed'),
     !forElectron &&
       VitePWA({
         registerType: 'autoUpdate',

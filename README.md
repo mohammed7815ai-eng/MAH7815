@@ -55,3 +55,10 @@ For the Google Play Store, create a signing key and build `assembleRelease` / `b
 ## Disclaimer
 
 General health information, not medical advice, diagnosis or treatment. People with symptoms should see a doctor rather than wait for screening.
+
+## Security and scale (v1.6.0)
+
+- **Scale:** the app is static and runs entirely in each visitor's browser, so there is no application server to overload. Pages are served from GitHub's CDN and then cached on the device by the service worker (works offline). `STRESS=1000000 npx vitest run src/engine/stress.test.ts` runs one million simulated people through the guideline engine.
+- **Encryption:** saved answers are encrypted with AES-GCM 256 using a non-extractable key kept in IndexedDB (`src/secureStore.ts`); old plain-text answers are migrated and deleted. All traffic uses https, and the optional server link must be https.
+- **Hardening:** strict Content-Security-Policy on the website, validation of saved data, an error boundary with a "Start again" screen, and in the Windows app: network allowlist, no DevTools or menu in the installed build, and Electron fuses (asar integrity check, no Node run-mode or inspector).
+- **Copyright:** proprietary, all rights reserved (see `LICENSE`); production bundles are minified, ship without source maps and carry a copyright notice.

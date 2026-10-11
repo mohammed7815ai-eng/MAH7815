@@ -18,7 +18,8 @@ export function normalizeServerLink(raw: string): string | null {
   if (s === '') return '';
   try {
     const u = new URL(s);
-    return u.protocol === 'https:' || u.protocol === 'http:' ? u.toString() : null;
+    const local = u.hostname === 'localhost' || u.hostname === '127.0.0.1';
+    return u.protocol === 'https:' || (u.protocol === 'http:' && local) ? u.toString() : null;
   } catch {
     return null;
   }
@@ -54,6 +55,9 @@ export async function sendAssessment(link: string, answers: Answers, assessment:
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(buildRecord(answers, assessment, language)),
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+      signal: AbortSignal.timeout(15000),
     });
     return res.ok ? 'sent' : 'failed';
   } catch {

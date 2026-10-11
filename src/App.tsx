@@ -12,34 +12,35 @@ import { KurdistanFlag } from './components/KurdistanFlag';
 import { Footer } from './components/Footer';
 import { Settings } from './components/Settings';
 import { getServerLink, sendAssessment, type SendStatus } from './server';
+import { loadAnswers, saveAnswers } from './answerStore';
 
 type Tab = 'check' | 'learn' | 'assistant' | 'translate' | 'settings' | 'about';
-
-function loadAnswers(): Answers {
-  try {
-    const raw = localStorage.getItem('answers');
-    if (raw) return { ...emptyAnswers, ...JSON.parse(raw) };
-  } catch {
-    /* ignore */
-  }
-  return emptyAnswers;
-}
 
 export default function App() {
   const { t, lang, setLang } = useI18n();
   const [tab, setTab] = useState<Tab>('check');
-  const [answers, setAnswersState] = useState<Answers>(loadAnswers);
+  const [answers, setAnswersState] = useState<Answers>(emptyAnswers);
+  const [loaded, setLoaded] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [sendStatus, setSendStatus] = useState<SendStatus | null>(null);
   const assessment = useMemo(() => (answers.age != null && answers.sex != null ? assess(answers) : null), [answers]);
 
+  // Restore the encrypted answers saved on this device.
+  useEffect(() => {
+    let live = true;
+    loadAnswers().then((a) => {
+      if (!live) return;
+      setAnswersState(a);
+      setLoaded(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+
   const setAnswers = (a: Answers) => {
     setAnswersState(a);
-    try {
-      localStorage.setItem('answers', JSON.stringify(a));
-    } catch {
-      /* ignore */
-    }
+    void saveAnswers(a);
   };
 
   // Pink theme for women, blue for men (set on <html> so the whole page background changes).
@@ -84,10 +85,10 @@ export default function App() {
         </p>
       )}
 
-      <div className="disclaimer no-print">{t('disclaimer.short')} {t(__SERVER_SETTINGS__ && getServerLink() ? 'privacy.server' : 'privacy.short')}</div>
+      <div className="disclaimer no-print">{t('disclaimer.short')}{__SERVER_SETTINGS__ && getServerLink() ? ` ${t('privacy.server')}` : ''}</div>
 
       <main>
-        {tab === 'check' &&
+        {tab === 'check' && loaded &&
           (showResults && assessment ? (
             <Results
               answers={answers}

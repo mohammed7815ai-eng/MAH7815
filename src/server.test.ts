@@ -8,6 +8,8 @@ describe('server link', () => {
     expect(normalizeServerLink('  https://moh.example/api ')).toBe('https://moh.example/api');
     expect(normalizeServerLink('')).toBe('');
     expect(normalizeServerLink('ftp://x.org')).toBeNull();
+    expect(normalizeServerLink('http://moh.example/api')).toBeNull(); // https only
+    expect(normalizeServerLink('http://localhost:8080/x')).toBe('http://localhost:8080/x');
     expect(normalizeServerLink('not a link')).toBeNull();
   });
   it('builds an anonymous record', () => {
