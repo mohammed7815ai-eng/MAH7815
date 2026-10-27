@@ -6,6 +6,8 @@ import kmr from './locales/kmr.json';
 import badini from './locales/badini.json';
 import iraqEn from './editions/iraq.en.json';
 import iraqAr from './editions/iraq.ar.json';
+import iraqCkb from './editions/iraq.ckb.json';
+import iraqBadini from './editions/iraq.badini.json';
 import type { Msg } from '../engine/types';
 import { IS_IRAQ } from '../edition';
 
@@ -23,14 +25,20 @@ const ALL_LANGS: { id: Lang; name: string; dir: 'ltr' | 'rtl'; htmlLang: string 
 ];
 
 /** Languages offered by this edition (the Iraq edition offers Arabic and English). */
-export const IRAQ_LANGS: Lang[] = ['ar', 'en'];
+export const IRAQ_LANGS: Lang[] = ['ar', 'ckb', 'badini', 'en'];
 export const LANGS = IS_IRAQ ? ALL_LANGS.filter((l) => IRAQ_LANGS.includes(l.id)) : ALL_LANGS;
 
 /** Built-in text for one edition: the Iraq edition replaces edition-specific wording. */
 export function editionDicts(iraq: boolean): Record<Lang, Dict> {
   const base: Record<Lang, Dict> = { en, ar: ar as Dict, ckb: ckb as Dict, kmr: kmr as Dict, badini: badini as Dict };
   if (!iraq) return base;
-  return { ...base, en: { ...base.en, ...iraqEn } as Dict, ar: { ...base.ar, ...iraqAr } as Dict };
+  return {
+    ...base,
+    en: { ...base.en, ...iraqEn } as Dict,
+    ar: { ...base.ar, ...iraqAr } as Dict,
+    ckb: { ...base.ckb, ...iraqCkb } as Dict,
+    badini: { ...base.badini, ...iraqBadini } as Dict,
+  };
 }
 
 export const DICTS: Record<Lang, Dict> = editionDicts(IS_IRAQ);
@@ -120,7 +128,13 @@ function initialLang(): Lang {
     /* storage unavailable */
   }
   const nav = (typeof navigator !== 'undefined' ? navigator.language : 'en').toLowerCase();
-  if (nav.startsWith('ar') || IS_IRAQ) return IS_IRAQ && nav.startsWith('en') ? 'en' : 'ar';
+  if (IS_IRAQ) {
+    if (nav.startsWith('en')) return 'en';
+    if (nav.startsWith('ckb')) return 'ckb';
+    if (nav.startsWith('ku') || nav.startsWith('kmr')) return 'badini';
+    return 'ar';
+  }
+  if (nav.startsWith('ar')) return 'ar';
   if (nav.startsWith('ckb')) return 'ckb';
   if (nav.startsWith('ku-arab') || nav.startsWith('kmr-arab')) return 'badini';
   if (nav.startsWith('ku') || nav.startsWith('kmr')) return 'kmr';

@@ -5,7 +5,7 @@
   "results.intlBased": "International evidence (not covered by the national guideline)",
   "results.footer": "Take this plan to your family doctor or the nearest primary health care centre.",
   "about.body": "This tool helps people in Iraq understand which cancer screening tests are recommended for them. It applies the Iraqi Ministry of Health national cancer screening guideline for breast, cervical, colorectal, lung and prostate cancer. Where the national guideline is silent, it says so and uses WHO, IARC, NHS, USPSTF and CDC evidence, which is also shown for comparison.",
-  "about.translation": "The Arabic text was machine-drafted and must be reviewed by native-speaking clinicians before public use.",
+  "about.translation": "The Sorani, Badini and Arabic texts were machine-drafted and must be reviewed by native-speaking clinicians before public use.",
   "share.text": "Find out which cancer screening tests are right for you, based on the Iraqi national guideline.",
-  "tr.review": "The Arabic text was drafted by machine. Please correct anything that is wrong or unclear and send the file to the developers."
+  "tr.review": "The Sorani, Badini and Arabic texts were drafted by machine. Please correct anything that is wrong or unclear and send the file to the developers."
 }
