@@ -6,3 +6,5 @@ android/
 *.log
 .DS_Store
 dist-embed
+dist-iraq
+dist-iraq-embed

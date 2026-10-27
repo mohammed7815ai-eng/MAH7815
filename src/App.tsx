@@ -8,7 +8,7 @@ import { Learn } from './components/Learn';
 import { Assistant } from './components/Assistant';
 import { About } from './components/About';
 import { TranslationEditor } from './components/TranslationEditor';
-import { KurdistanFlag } from './components/KurdistanFlag';
+import { Flag } from './components/Flag';
 import { Footer } from './components/Footer';
 import { Settings } from './components/Settings';
 import { getServerLink, sendAssessment, type SendStatus } from './server';
@@ -55,7 +55,7 @@ export default function App() {
     <div className="app">
       <header className="topbar no-print">
         <div className="brand">
-          <KurdistanFlag className="flag" width={54} />
+          <Flag className="flag" width={54} />
           <div>
             <h1>{t('app.title')}</h1>
             <p className="subtitle">{t('app.subtitle')}</p>

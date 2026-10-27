@@ -12,7 +12,10 @@
     "test": "vitest run",
     "preview": "vite preview",
     "electron:win": "npm run build:electron && electron-builder --win",
-    "android:sync": "npm run build && npx cap sync android"
+    "android:sync": "npm run build && npx cap sync android",
+    "build:iraq": "EDITION=iraq vite build --outDir dist-iraq",
+    "build:iraq:electron": "EDITION=iraq vite build --mode electron --outDir dist-electron",
+    "build:iraq:embed": "EDITION=iraq vite build --mode embed --outDir dist-iraq-embed"
   },
   "license": "UNLICENSED",
   "dependencies": {

@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import pkg from './package.json' with { type: 'json' };
 
+const EDITION = process.env.EDITION === 'iraq' ? 'iraq' : 'krg';
+
 const NOTICE = `/*! Cancer Screening Guide v${pkg.version} - Copyright (c) 2026 Dr. Mohammed A Hassan. All rights reserved. Unauthorised copying, modification or redistribution is prohibited. */`;
 
 // Strict Content-Security-Policy for the public website: only this site's own files may run or be fetched.
@@ -20,6 +22,24 @@ const CSP = [
   "form-action 'none'",
   'upgrade-insecure-requests',
 ].join('; ');
+
+// The Iraq edition gets its own page title, description and share preview.
+function editionHtml(): Plugin {
+  return {
+    name: 'edition-html',
+    transformIndexHtml(html) {
+      if (EDITION !== 'iraq') return html;
+      return html
+        .replaceAll('Cancer Screening Guide · Kurdistan Region', 'Cancer Screening Guide · Iraq')
+        .replaceAll('for the Kurdistan Region based on the KRG MOH 2023 guidelines', 'for Iraq based on the Iraqi Ministry of Health national guideline')
+        .replaceAll('based on the KRG Ministry of Health 2023 guidelines. In Kurdish, Arabic and English.', 'based on the Iraqi Ministry of Health national guideline. In Arabic and English.')
+        .replaceAll('Based on the KRG MOH 2023 guidelines.', 'Based on the Iraqi national guideline.')
+        .replaceAll('Kurdistan flag with the title Cancer Screening Guide in English, Kurdish and Arabic', 'Iraqi flag with the title Cancer Screening Guide in English and Arabic')
+        .replaceAll('https://mohammed7815ai-eng.github.io/MAH7815/', 'https://mohammed7815ai-eng.github.io/MAH7815/iraq/')
+        .replace('<html lang="en" dir="ltr"', '<html lang="ar" dir="rtl"');
+    },
+  };
+}
 
 function webSecurity(enabled: boolean): Plugin {
   return {
@@ -43,8 +63,10 @@ export default defineConfig(({ mode }) => {
   const forElectron = mode === 'electron' || mode === 'embed';
   return {
   base: './',
+  publicDir: EDITION === 'iraq' ? 'public-iraq' : 'public',
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
+    __EDITION__: JSON.stringify(EDITION),
     __TRANSLATION_EDITOR__: JSON.stringify(mode === 'electron'),
     __SERVER_SETTINGS__: JSON.stringify(mode === 'electron'),
     // The AI assistant needs a personal API key; hidden for now (code kept in src/components/Assistant.tsx).
@@ -56,6 +78,7 @@ export default defineConfig(({ mode }) => {
   },
   plugins: [
     react(),
+    editionHtml(),
     webSecurity(mode !== 'electron' && mode !== 'embed'),
     !forElectron &&
       VitePWA({
@@ -63,9 +86,9 @@ export default defineConfig(({ mode }) => {
         includeAssets: ['icon.svg', 'apple-touch-icon.png'],
         workbox: { globPatterns: ['**/*.{js,css,html,svg,png}', '**/noto-sans-{arabic-arabic,arabic-latin,latin,latin-ext}-*.woff2'], globIgnores: ['og-image.png'], maximumFileSizeToCacheInBytes: 5_000_000 },
         manifest: {
-          name: 'Cancer Screening Guide – Kurdistan',
+          name: EDITION === 'iraq' ? 'Cancer Screening Guide – Iraq' : 'Cancer Screening Guide – Kurdistan',
           short_name: 'Screening',
-          description: 'Cancer screening guidance based on the KRG MOH 2023 guidelines.',
+          description: EDITION === 'iraq' ? 'Cancer screening guidance based on the Iraqi national guideline.' : 'Cancer screening guidance based on the KRG MOH 2023 guidelines.',
           theme_color: '#b0306a',
           background_color: '#f6f7f9',
           display: 'standalone',

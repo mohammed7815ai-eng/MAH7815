@@ -4,14 +4,17 @@ import ar from './locales/ar.json';
 import ckb from './locales/ckb.json';
 import kmr from './locales/kmr.json';
 import badini from './locales/badini.json';
+import iraqEn from './editions/iraq.en.json';
+import iraqAr from './editions/iraq.ar.json';
 import type { Msg } from '../engine/types';
+import { IS_IRAQ } from '../edition';
 
 // Translations live in ./locales/*.json (one file per language, edit freely).
 // English (./en.ts) is the reference and defines the list of keys.
 export type Lang = 'en' | 'ckb' | 'kmr' | 'badini' | 'ar';
 type Dict = Record<MessageKey, string>;
 
-export const LANGS: { id: Lang; name: string; dir: 'ltr' | 'rtl'; htmlLang: string }[] = [
+const ALL_LANGS: { id: Lang; name: string; dir: 'ltr' | 'rtl'; htmlLang: string }[] = [
   { id: 'ckb', name: 'کوردی (سۆرانی)', dir: 'rtl', htmlLang: 'ckb' },
   { id: 'kmr', name: 'Kurdî (Kurmancî)', dir: 'ltr', htmlLang: 'kmr' },
   { id: 'badini', name: 'کوردی (بادینی)', dir: 'rtl', htmlLang: 'kmr-Arab' },
@@ -19,7 +22,18 @@ export const LANGS: { id: Lang; name: string; dir: 'ltr' | 'rtl'; htmlLang: stri
   { id: 'en', name: 'English', dir: 'ltr', htmlLang: 'en' },
 ];
 
-export const DICTS: Record<Lang, Dict> = { en, ar: ar as Dict, ckb: ckb as Dict, kmr: kmr as Dict, badini: badini as Dict };
+/** Languages offered by this edition (the Iraq edition offers Arabic and English). */
+export const IRAQ_LANGS: Lang[] = ['ar', 'en'];
+export const LANGS = IS_IRAQ ? ALL_LANGS.filter((l) => IRAQ_LANGS.includes(l.id)) : ALL_LANGS;
+
+/** Built-in text for one edition: the Iraq edition replaces edition-specific wording. */
+export function editionDicts(iraq: boolean): Record<Lang, Dict> {
+  const base: Record<Lang, Dict> = { en, ar: ar as Dict, ckb: ckb as Dict, kmr: kmr as Dict, badini: badini as Dict };
+  if (!iraq) return base;
+  return { ...base, en: { ...base.en, ...iraqEn } as Dict, ar: { ...base.ar, ...iraqAr } as Dict };
+}
+
+export const DICTS: Record<Lang, Dict> = editionDicts(IS_IRAQ);
 
 // ---- User edits (translation editor). Stored on the device, applied on top of the built-in files.
 export type Overrides = Partial<Record<Lang, Record<string, string>>>;
@@ -101,12 +115,12 @@ const Ctx = createContext<I18n | null>(null);
 function initialLang(): Lang {
   try {
     const saved = localStorage.getItem('lang') as Lang | null;
-    if (saved && saved in DICTS) return saved;
+    if (saved && LANGS.some((l) => l.id === saved)) return saved;
   } catch {
     /* storage unavailable */
   }
   const nav = (typeof navigator !== 'undefined' ? navigator.language : 'en').toLowerCase();
-  if (nav.startsWith('ar')) return 'ar';
+  if (nav.startsWith('ar') || IS_IRAQ) return IS_IRAQ && nav.startsWith('en') ? 'en' : 'ar';
   if (nav.startsWith('ckb')) return 'ckb';
   if (nav.startsWith('ku-arab') || nav.startsWith('kmr-arab')) return 'badini';
   if (nav.startsWith('ku') || nav.startsWith('kmr')) return 'kmr';

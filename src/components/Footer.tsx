@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useI18n } from '../i18n';
-import { KurdistanFlag } from './KurdistanFlag';
+import { Flag } from './Flag';
 
-/** Public address of the website, used by the share button. */
-export const SHARE_URL = 'https://mohammed7815ai-eng.github.io/MAH7815/';
+import { SHARE_URL } from '../edition';
+
+export { SHARE_URL };
 export const DEVELOPER = 'Dr. Mohammed A Hassan';
 
 export function Footer() {
@@ -35,7 +36,7 @@ export function Footer() {
         {copied ? t('share.copied') : t('share.button')}
       </button>
       <div className="credit">
-        <KurdistanFlag width={30} />
+        <Flag width={30} />
         <span>
           {t('footer.developedBy')} <strong dir="ltr">{DEVELOPER}</strong>
         </span>

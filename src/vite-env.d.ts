@@ -3,3 +3,4 @@ declare const __APP_VERSION__: string;
 declare const __TRANSLATION_EDITOR__: boolean;
 declare const __AI_ASSISTANT__: boolean;
 declare const __SERVER_SETTINGS__: boolean;
+declare const __EDITION__: 'krg' | 'iraq';
