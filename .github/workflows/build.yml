@@ -24,8 +24,11 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - run: npm run build:iraq
       - uses: actions/upload-artifact@v4
         with: { name: web-build, path: dist }
+      - uses: actions/upload-artifact@v4
+        with: { name: web-build-iraq, path: dist-iraq }
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main'
         with: { path: dist }
@@ -43,6 +46,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with: { name: web-build, path: site }
+      # Iraq edition: same site, under iraq/
+      - uses: actions/download-artifact@v4
+        with: { name: web-build-iraq, path: site/iraq }
       - run: touch site/.nojekyll
       - uses: peaceiris/actions-gh-pages@v4
         with:
@@ -70,20 +76,30 @@ jobs:
 
   windows:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - { edition: krg, script: 'electron:win', out: release, name: windows }
+          - { edition: iraq, script: 'electron:win:iraq', out: release-iraq, name: windows-iraq }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npm test
-      - run: npm run electron:win -- --publish never
+      - run: npm run ${{ matrix.script }} -- --publish never
       - uses: actions/upload-artifact@v4
         with:
-          name: windows
-          path: release/*.exe
+          name: ${{ matrix.name }}
+          path: ${{ matrix.out }}/*.exe
 
   android:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - { edition: krg, build: 'build:electron', apk: CancerScreeningGuide.apk, name: android }
+          - { edition: iraq, build: 'build:iraq:electron', apk: CancerScreeningGuide-Iraq.apk, name: android-iraq }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -94,7 +110,13 @@ jobs:
       - run: npm ci
         env: { ELECTRON_SKIP_BINARY_DOWNLOAD: '1' }
       # Same build as the desktop app: no service worker inside the Android WebView.
-      - run: npm run build:electron
+      - run: npm run ${{ matrix.build }}
+      # The Iraq edition is a separate Android app, so it installs next to the Kurdistan one.
+      - name: Iraq app ID and name
+        if: matrix.edition == 'iraq'
+        run: |
+          jq '.appId = "iq.health.cancerscreening" | .appName = "Cancer Screening Guide Iraq"' capacitor.config.json > c.json
+          mv c.json capacitor.config.json
       - run: npx cap add android
       # Always light: use a light app theme and stop Android from auto-darkening the page in dark mode.
       - name: Force light theme
@@ -110,9 +132,9 @@ jobs:
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
-      - run: cp android/app/build/outputs/apk/debug/app-debug.apk CancerScreeningGuide.apk
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk ${{ matrix.apk }}
       - uses: actions/upload-artifact@v4
-        with: { name: android, path: CancerScreeningGuide.apk }
+        with: { name: '${{ matrix.name }}', path: '${{ matrix.apk }}' }
 
   release:
     # Publishes the .exe, .apk and web zip as a public GitHub Release named after package.json's version.
@@ -126,17 +148,23 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { path: artifacts }
       - run: cd artifacts/web-build && zip -r ../../CancerScreeningGuide-web.zip .
+      - run: cd artifacts/web-build-iraq && zip -r ../../CancerScreeningGuide-Iraq-web.zip .
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.version.outputs.tag }}
           target_commitish: ${{ github.sha }}
           name: Cancer Screening Guide ${{ steps.version.outputs.tag }}
           body: |
+            Two editions: Kurdistan Region (files without "Iraq") and Iraq (files with "Iraq" in the name). They install side by side.
+            Iraq website: https://mohammed7815ai-eng.github.io/MAH7815/iraq/
             Windows: download Cancer-Screening-Guide-Setup (installer with Start menu and desktop shortcuts) or the Portable .exe (runs without installing).
             Android: download CancerScreeningGuide.apk on the phone and open it (allow installing from this source when asked).
             Web: unzip CancerScreeningGuide-web.zip and host it, or open index.html.
             Kurdish and Arabic texts are machine-drafted; use the Edit translations tab to correct them.
           files: |
             artifacts/windows/*.exe
+            artifacts/windows-iraq/*.exe
             artifacts/android/*.apk
+            artifacts/android-iraq/*.apk
             CancerScreeningGuide-web.zip
+            CancerScreeningGuide-Iraq-web.zip

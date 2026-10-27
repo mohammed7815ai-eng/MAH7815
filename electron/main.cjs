@@ -2,7 +2,9 @@
 const { app, BrowserWindow, Menu, nativeTheme, session, shell } = require('electron');
 const path = require('path');
 
-app.setAppUserModelId('krd.health.cancerscreening');
+// The Iraq edition is packaged with edition "iraq" in its package.json (see the CI build).
+const IRAQ = require('../package.json').edition === 'iraq';
+app.setAppUserModelId(IRAQ ? 'iq.health.cancerscreening' : 'krd.health.cancerscreening');
 // Always light, even when Windows is set to dark mode.
 nativeTheme.themeSource = 'light';
 
@@ -31,7 +33,7 @@ function createWindow() {
     minHeight: 480,
     show: false,
     backgroundColor: '#f6f7f9',
-    title: 'Cancer Screening Guide',
+    title: IRAQ ? 'Cancer Screening Guide · Iraq' : 'Cancer Screening Guide',
     icon: path.join(__dirname, '..', 'build', 'icon.ico'),
     autoHideMenuBar: true,
     webPreferences: {

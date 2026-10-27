@@ -9,7 +9,9 @@ describe('saved answers', () => {
     const a = { ...emptyAnswers, age: 47, sex: 'female' as const, familyBreastOvarian: true };
     const enc = await encryptJSON(key, a);
     expect(enc).not.toContain('female');
-    expect(enc).not.toContain('47');
+    // Not '47': two random base64 characters often spell it.
+    expect(enc).not.toContain('familyBreastOvarian');
+    expect(enc).not.toContain(btoa(JSON.stringify(a)).slice(0, 16));
     expect(await decryptJSON(key, enc)).toEqual(a);
   });
   it('rejects tampered ciphertext', async () => {

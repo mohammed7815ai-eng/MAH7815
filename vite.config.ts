@@ -31,9 +31,9 @@ function editionHtml(): Plugin {
       if (EDITION !== 'iraq') return html;
       return html
         .replaceAll('Cancer Screening Guide · Kurdistan Region', 'Cancer Screening Guide · Iraq')
-        .replaceAll('for the Kurdistan Region based on the KRG MOH 2023 guidelines', 'for Iraq based on the Iraqi Ministry of Health national guideline')
-        .replaceAll('based on the KRG Ministry of Health 2023 guidelines. In Kurdish, Arabic and English.', 'based on the Iraqi Ministry of Health national guideline. In Arabic and English.')
-        .replaceAll('Based on the KRG MOH 2023 guidelines.', 'Based on the Iraqi national guideline.')
+        .replaceAll('for the Kurdistan Region based on the KRG MOH 2023 guidelines', 'for Iraq based on the Ministry of Health 2023 guidelines')
+        .replaceAll('based on the KRG Ministry of Health 2023 guidelines. In Kurdish, Arabic and English.', 'based on the Ministry of Health 2023 guidelines. In Arabic, Sorani, Badini and English.')
+        .replaceAll('Based on the KRG MOH 2023 guidelines.', 'Based on the Ministry of Health 2023 guidelines.')
         .replaceAll('Kurdistan flag with the title Cancer Screening Guide in English, Kurdish and Arabic', 'Iraqi flag with the title Cancer Screening Guide in English and Arabic')
         .replaceAll('https://mohammed7815ai-eng.github.io/MAH7815/', 'https://mohammed7815ai-eng.github.io/MAH7815/iraq/')
         .replace('<html lang="en" dir="ltr"', '<html lang="ar" dir="rtl"');
@@ -84,11 +84,13 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['icon.svg', 'apple-touch-icon.png'],
-        workbox: { globPatterns: ['**/*.{js,css,html,svg,png}', '**/noto-sans-{arabic-arabic,arabic-latin,latin,latin-ext}-*.woff2'], globIgnores: ['og-image.png'], maximumFileSizeToCacheInBytes: 5_000_000 },
+        workbox: { globPatterns: ['**/*.{js,css,html,svg,png}', '**/noto-sans-{arabic-arabic,arabic-latin,latin,latin-ext}-*.woff2'], globIgnores: ['og-image.png'], maximumFileSizeToCacheInBytes: 5_000_000,
+          // The Iraq edition lives at iraq/ on the same site; the Kurdistan service worker must not answer for it.
+          navigateFallbackDenylist: EDITION === 'iraq' ? [] : [/\/iraq\//] },
         manifest: {
           name: EDITION === 'iraq' ? 'Cancer Screening Guide – Iraq' : 'Cancer Screening Guide – Kurdistan',
           short_name: 'Screening',
-          description: EDITION === 'iraq' ? 'Cancer screening guidance based on the Iraqi national guideline.' : 'Cancer screening guidance based on the KRG MOH 2023 guidelines.',
+          description: EDITION === 'iraq' ? 'Cancer screening guidance for Iraq based on the Ministry of Health 2023 guidelines.' : 'Cancer screening guidance based on the KRG MOH 2023 guidelines.',
           theme_color: '#b0306a',
           background_color: '#f6f7f9',
           display: 'standalone',

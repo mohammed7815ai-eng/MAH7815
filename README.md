@@ -52,6 +52,19 @@ Local builds: `npm run electron:win` on Windows; for Android, install Android St
 
 For the Google Play Store, create a signing key and build `assembleRelease` / `bundleRelease` instead of the debug APK.
 
+## Iraq edition (v1.7.0)
+
+A second edition for all of Iraq is built from the same code with `EDITION=iraq`
+(`npm run build:iraq`, `build:iraq:electron`, `build:iraq:embed`, `electron:win:iraq`).
+It shows the Iraqi flag, comes in Arabic, Sorani, Badini and English, and contains no
+Kurdistan or KRG wording (checked by `src/i18n/edition.test.ts`). Its texts live in
+`src/i18n/editions/iraq.*.json`, its web assets in `public-iraq/` and its installer art and
+terms in `build-iraq/`. Website: https://mohammed7815ai-eng.github.io/MAH7815/iraq/. The
+Windows and Android apps have their own IDs, so both editions install side by side.
+
+Until the Iraqi national guideline is supplied, the Iraq edition applies the same
+Ministry of Health 2023 (V01) rules as the Kurdistan edition, labelled "Ministry of Health 2023 guideline".
+
 ## Disclaimer
 
 General health information, not medical advice, diagnosis or treatment. People with symptoms should see a doctor rather than wait for screening.

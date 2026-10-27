@@ -1,4 +1,5 @@
 import type { SourceId } from './types';
+import { IS_IRAQ } from '../edition';
 
 export interface Source {
   id: SourceId;
@@ -12,7 +13,7 @@ export const SOURCES: Record<SourceId, Source> = {
   krg2023: {
     id: 'krg2023',
     title: 'Cancer Screening Clinical Practice Guidelines, V01',
-    org: 'Kurdistan Regional Government, Ministry of Health, Cancer Control Department',
+    org: IS_IRAQ ? 'Ministry of Health, Cancer Control Department' : 'Kurdistan Regional Government, Ministry of Health, Cancer Control Department',
     year: '2023',
   },
   who_cervical2021: {

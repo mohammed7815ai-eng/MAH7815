@@ -9,10 +9,10 @@ describe('Iraq edition wording', () => {
   it('keeps the Kurdistan edition unchanged', () => {
     expect(editionDicts(false).en['app.subtitle']).toMatch(/Kurdistan/);
   });
-  it('has no Kurdistan or Kurdish terms in its general texts', () => {
+  it('has no Kurdistan or Kurdish terms in any text', () => {
     for (const lang of ['en', 'ar', 'ckb', 'badini'] as const) {
-      for (const k of ['app.subtitle', 'form.intro', 'results.krg', 'results.footer', 'about.body', 'about.translation', 'share.text', 'tr.review'] as const) {
-        expect(iraq[lang][k], `${lang}:${k}`).not.toMatch(FORBIDDEN);
+      for (const [k, v] of Object.entries(iraq[lang])) {
+        expect(v, `${lang}:${k}`).not.toMatch(FORBIDDEN);
       }
     }
   });

@@ -1,6 +1,6 @@
 {
   "name": "cancer-screening-guide",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Cancer Screening Guide based on the KRG Ministry of Health 2023 guidelines",
   "main": "electron/main.cjs",
   "scripts": {
@@ -15,7 +15,8 @@
     "android:sync": "npm run build && npx cap sync android",
     "build:iraq": "EDITION=iraq vite build --outDir dist-iraq",
     "build:iraq:electron": "EDITION=iraq vite build --mode electron --outDir dist-electron",
-    "build:iraq:embed": "EDITION=iraq vite build --mode embed --outDir dist-iraq-embed"
+    "build:iraq:embed": "EDITION=iraq vite build --mode embed --outDir dist-iraq-embed",
+    "electron:win:iraq": "npm run build:iraq:electron && electron-builder --win --config electron-builder.iraq.cjs"
   },
   "license": "UNLICENSED",
   "dependencies": {
