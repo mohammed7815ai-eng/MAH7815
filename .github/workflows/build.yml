@@ -77,6 +77,7 @@ jobs:
   windows:
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - { edition: krg, script: 'electron:win', out: release, name: windows }
@@ -96,6 +97,7 @@ jobs:
   android:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - { edition: krg, build: 'build:electron', apk: CancerScreeningGuide.apk, name: android }

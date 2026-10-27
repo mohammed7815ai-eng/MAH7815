@@ -13,9 +13,9 @@
     "preview": "vite preview",
     "electron:win": "npm run build:electron && electron-builder --win",
     "android:sync": "npm run build && npx cap sync android",
-    "build:iraq": "EDITION=iraq vite build --outDir dist-iraq",
-    "build:iraq:electron": "EDITION=iraq vite build --mode electron --outDir dist-electron",
-    "build:iraq:embed": "EDITION=iraq vite build --mode embed --outDir dist-iraq-embed",
+    "build:iraq": "node scripts/iraq.mjs vite build --outDir dist-iraq",
+    "build:iraq:electron": "node scripts/iraq.mjs vite build --mode electron --outDir dist-electron",
+    "build:iraq:embed": "node scripts/iraq.mjs vite build --mode embed --outDir dist-iraq-embed",
     "electron:win:iraq": "npm run build:iraq:electron && electron-builder --win --config electron-builder.iraq.cjs"
   },
   "license": "UNLICENSED",
