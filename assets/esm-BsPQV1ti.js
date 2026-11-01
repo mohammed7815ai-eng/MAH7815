@@ -1,0 +1,3 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./web-5cLNYuQe.js","./index-VLaQGz1K.js","./index-DaRh38n_.css"])))=>i.map(i=>d[i]);
+/*! Cancer Screening Guide v1.8.2 - Copyright (c) 2026 Dr. Mohammed A Hassan. All rights reserved. Unauthorised copying, modification or redistribution is prohibited. */
+import{i as e,t}from"./index-VLaQGz1K.js";var n=e(`Share`,{web:()=>t(()=>import(`./web-5cLNYuQe.js`).then(e=>new e.ShareWeb),__vite__mapDeps([0,1,2]),import.meta.url)});export{n as Share};
