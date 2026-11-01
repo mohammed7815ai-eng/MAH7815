@@ -12,9 +12,50 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  # Cloudflare Pages project that serves the public website (its address becomes the share link).
+  CF_PROJECT: cancer-screening-guide
+
 jobs:
-  web:
+  site:
+    # Works out the public website address. With the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets set,
+    # it is the Cloudflare Pages address (created here on first run), so shared links show no GitHub address.
+    # Without them it falls back to GitHub Pages.
     runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.url.outputs.url }}
+      cloudflare: ${{ steps.url.outputs.cloudflare }}
+    steps:
+      - id: url
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          fallback=https://mohammed7815ai-eng.github.io/MAH7815/
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Cloudflare secrets not set: using $fallback"
+            echo "url=$fallback" >> "$GITHUB_OUTPUT"; echo "cloudflare=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects"
+          auth="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          r=$(curl -sS -H "$auth" "$api/$CF_PROJECT")
+          if [ "$(echo "$r" | jq -r .success)" != true ]; then
+            echo "Creating Cloudflare Pages project $CF_PROJECT"
+            r=$(curl -sS -X POST -H "$auth" -H 'Content-Type: application/json' \
+              -d "{\"name\":\"$CF_PROJECT\",\"production_branch\":\"main\"}" "$api")
+          fi
+          sub=$(echo "$r" | jq -r '.result.subdomain // empty')
+          if [ -z "$sub" ]; then
+            echo "::error::Cloudflare Pages did not answer as expected (check the token has Cloudflare Pages: Edit): $(echo "$r" | jq -c .errors)"
+            exit 1
+          fi
+          echo "Website address: https://$sub/"
+          echo "url=https://$sub/" >> "$GITHUB_OUTPUT"; echo "cloudflare=true" >> "$GITHUB_OUTPUT"
+
+  web:
+    needs: site
+    runs-on: ubuntu-latest
+    env: { SITE_URL: '${{ needs.site.outputs.url }}' }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,19 +78,31 @@ jobs:
     # Public website for the app branch: published to the gh-pages branch (GitHub Pages, served through a CDN).
     # If CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets are set, also deploys to Cloudflare Pages
     # (unlimited bandwidth; recommended for national-scale traffic).
-    needs: web
+    needs: [site, web]
     if: github.ref == 'refs/heads/cancer-screening-app'
     runs-on: ubuntu-latest
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      SITE_URL: ${{ needs.site.outputs.url }}
     steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: scripts }
       - uses: actions/download-artifact@v4
         with: { name: web-build, path: site }
       # Iraq edition: same site, under iraq/
       - uses: actions/download-artifact@v4
         with: { name: web-build-iraq, path: site/iraq }
       - run: touch site/.nojekyll
+      - name: Cloudflare Pages
+        if: needs.site.outputs.cloudflare == 'true'
+        run: |
+          cp scripts/cloudflare-headers.txt site/_headers
+          npx --yes wrangler@4 pages deploy site --project-name "$CF_PROJECT" --branch main --commit-dirty=true
+      # Once the website is on Cloudflare, the GitHub Pages copy only forwards visitors (old links included) to it.
+      - name: GitHub Pages forwards to Cloudflare
+        if: needs.site.outputs.cloudflare == 'true'
+        run: rm -rf site && node scripts/forward-site.mjs site "$SITE_URL"
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -59,9 +112,6 @@ jobs:
       - run: >-
           curl -fsS -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json"
           https://api.github.com/repos/${{ github.repository }}/pages/builds
-      - name: Cloudflare Pages (optional)
-        if: env.CLOUDFLARE_API_TOKEN != ''
-        run: npx --yes wrangler@4 pages deploy site --project-name cancer-screening-guide --branch main
 
   pages:
     # Publishes the web app on GitHub Pages. Enable Pages (Settings > Pages > Source: GitHub Actions) once.
@@ -75,7 +125,9 @@ jobs:
         uses: actions/deploy-pages@v4
 
   windows:
+    needs: site
     runs-on: windows-latest
+    env: { SITE_URL: '${{ needs.site.outputs.url }}' }
     strategy:
       fail-fast: false
       matrix:
@@ -95,7 +147,9 @@ jobs:
           path: ${{ matrix.out }}/*.exe
 
   android:
+    needs: site
     runs-on: ubuntu-latest
+    env: { SITE_URL: '${{ needs.site.outputs.url }}' }
     strategy:
       fail-fast: false
       matrix:
@@ -141,7 +195,7 @@ jobs:
   release:
     # Publishes the .exe, .apk and web zip as a public GitHub Release named after package.json's version.
     if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/cancer-screening-app'
-    needs: [web, windows, android]
+    needs: [site, web, windows, android]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -159,7 +213,7 @@ jobs:
           name: Cancer Screening Guide ${{ steps.version.outputs.tag }}
           body: |
             Two editions: Kurdistan Region (files without "Iraq") and Iraq (files with "Iraq" in the name). They install side by side.
-            Iraq website: https://mohammed7815ai-eng.github.io/MAH7815/iraq/
+            Websites: ${{ needs.site.outputs.url }} (Kurdistan Region) and ${{ needs.site.outputs.url }}iraq/ (Iraq)
             Windows: download Cancer-Screening-Guide-Setup (installer with Start menu and desktop shortcuts) or the Portable .exe (runs without installing).
             Android: download CancerScreeningGuide.apk on the phone and open it (allow installing from this source when asked).
             Filling-Guide-Arabic.pdf (and the -Iraq one): one-page Arabic instructions for filling in the form, with pictures.

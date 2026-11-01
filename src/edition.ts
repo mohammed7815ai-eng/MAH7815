@@ -6,6 +6,5 @@ export type Edition = 'krg' | 'iraq';
 export const EDITION: Edition = __EDITION__;
 export const IS_IRAQ = EDITION === 'iraq';
 
-const SITE = 'https://mohammed7815ai-eng.github.io/MAH7815/';
-/** Public address of this edition's website, used by the share button. */
-export const SHARE_URL = IS_IRAQ ? `${SITE}iraq/` : SITE;
+/** Public address of this edition's website, used by the share button (set at build time, see vite.config.ts). */
+export const SHARE_URL: string = __SITE_URL__;

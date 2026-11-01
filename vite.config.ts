@@ -5,6 +5,12 @@ import pkg from './package.json' with { type: 'json' };
 
 const EDITION = process.env.EDITION === 'iraq' ? 'iraq' : 'krg';
 
+// Public address of the website (the Kurdistan edition at its root, the Iraq edition under iraq/).
+// CI sets SITE_URL to the Cloudflare Pages address once that is configured, so shared links carry no GitHub address.
+const GITHUB_SITE = 'https://mohammed7815ai-eng.github.io/MAH7815/';
+const SITE_ROOT = (process.env.SITE_URL?.trim() || GITHUB_SITE).replace(/\/*$/, '/');
+const SITE_URL = EDITION === 'iraq' ? `${SITE_ROOT}iraq/` : SITE_ROOT;
+
 const NOTICE = `/*! Cancer Screening Guide v${pkg.version} - Copyright (c) 2026 Dr. Mohammed A Hassan. All rights reserved. Unauthorised copying, modification or redistribution is prohibited. */`;
 
 // Strict Content-Security-Policy for the public website: only this site's own files may run or be fetched.
@@ -28,6 +34,7 @@ function editionHtml(): Plugin {
   return {
     name: 'edition-html',
     transformIndexHtml(html) {
+      html = html.replaceAll(GITHUB_SITE, SITE_URL);
       if (EDITION !== 'iraq') return html;
       return html
         .replaceAll('Cancer Screening Guide · Kurdistan Region', 'Cancer Screening Guide · Iraq')
@@ -35,7 +42,6 @@ function editionHtml(): Plugin {
         .replaceAll('based on the KRG Ministry of Health 2023 guidelines. In Kurdish, Arabic and English.', 'based on the Ministry of Health 2023 guidelines. In Arabic, Sorani, Badini and English.')
         .replaceAll('Based on the KRG MOH 2023 guidelines.', 'Based on the Ministry of Health 2023 guidelines.')
         .replaceAll('Kurdistan flag with the title Cancer Screening Guide in English, Kurdish and Arabic', 'Iraqi flag with the title Cancer Screening Guide in English and Arabic')
-        .replaceAll('https://mohammed7815ai-eng.github.io/MAH7815/', 'https://mohammed7815ai-eng.github.io/MAH7815/iraq/')
         .replace('<html lang="en" dir="ltr"', '<html lang="ar" dir="rtl"');
     },
   };
@@ -67,6 +73,7 @@ export default defineConfig(({ mode }) => {
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __EDITION__: JSON.stringify(EDITION),
+    __SITE_URL__: JSON.stringify(SITE_URL),
     __TRANSLATION_EDITOR__: JSON.stringify(mode === 'electron'),
     __SERVER_SETTINGS__: JSON.stringify(mode === 'electron'),
     // The AI assistant needs a personal API key; hidden for now (code kept in src/components/Assistant.tsx).
