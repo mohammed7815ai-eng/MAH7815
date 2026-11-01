@@ -1,5 +1,6 @@
-name: Short share link
-# Creates the short link tinyurl.com/KRGscreening for the public website (run once; re-running is harmless).
+name: Short share links
+# Creates short HTTPS links for the two app pages hosted on claude.ai (no GitHub address in them).
+# Run from the Actions tab (re-running is harmless: an alias that already exists is left unchanged).
 on:
   workflow_dispatch:
   push:
@@ -10,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          URL=https://mohammed7815ai-eng.github.io/MAH7815/
-          echo "tinyurl: $(curl -sS "https://tinyurl.com/api-create.php?alias=KRGscreening&url=$URL")"
-          echo "is.gd:   $(curl -sS "https://is.gd/create.php?format=simple&shorturl=KRGscreening&url=$URL")"
-          echo "check:   $(curl -sSI https://tinyurl.com/KRGscreening | grep -i '^location')"
+          make() {  # alias, destination
+            echo "== $1 -> $2"
+            echo "tinyurl: $(curl -sS "https://tinyurl.com/api-create.php?alias=$1&url=$2")"
+            echo "is.gd:   $(curl -sS "https://is.gd/create.php?format=simple&shorturl=$1&url=$2")"
+            echo "check tinyurl: $(curl -sSI "https://tinyurl.com/$1" | grep -i '^location')"
+            echo "check is.gd:   $(curl -sSI "https://is.gd/$1" | grep -i '^location')"
+          }
+          make CancerScreeningKRG https://claude.ai/artifact/XbVwLNPEXmC86Yo5Ny3fNr
+          make CancerScreeningIraq https://claude.ai/artifact/Lq8dyudRqQTqtnQUrord63
