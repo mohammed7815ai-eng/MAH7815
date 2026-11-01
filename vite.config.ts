@@ -9,7 +9,8 @@ const EDITION = process.env.EDITION === 'iraq' ? 'iraq' : 'krg';
 // CI sets SITE_URL to the Cloudflare Pages address once that is configured, so shared links carry no GitHub address.
 const GITHUB_SITE = 'https://mohammed7815ai-eng.github.io/MAH7815/';
 const SITE_ROOT = (process.env.SITE_URL?.trim() || GITHUB_SITE).replace(/\/*$/, '/');
-const SITE_URL = EDITION === 'iraq' ? `${SITE_ROOT}iraq/` : SITE_ROOT;
+// SHARE_URL, when set, is used exactly as given (for builds hosted somewhere else, such as the claude.ai preview pages).
+const SITE_URL = process.env.SHARE_URL?.trim() || (EDITION === 'iraq' ? `${SITE_ROOT}iraq/` : SITE_ROOT);
 
 const NOTICE = `/*! Cancer Screening Guide v${pkg.version} - Copyright (c) 2026 Dr. Mohammed A Hassan. All rights reserved. Unauthorised copying, modification or redistribution is prohibited. */`;
 
@@ -34,7 +35,8 @@ function editionHtml(): Plugin {
   return {
     name: 'edition-html',
     transformIndexHtml(html) {
-      html = html.replaceAll(GITHUB_SITE, SITE_URL);
+      const assets = SITE_URL.endsWith('/') ? SITE_URL : `${SITE_URL}/`;
+      html = html.replaceAll(`${GITHUB_SITE}og-image.png`, `${assets}og-image.png`).replaceAll(GITHUB_SITE, SITE_URL);
       if (EDITION !== 'iraq') return html;
       return html
         .replaceAll('Cancer Screening Guide · Kurdistan Region', 'Cancer Screening Guide · Iraq')

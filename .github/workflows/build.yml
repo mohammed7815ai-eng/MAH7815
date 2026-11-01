@@ -97,7 +97,6 @@ jobs:
       - name: Cloudflare Pages
         if: needs.site.outputs.cloudflare == 'true'
         run: |
-          cp scripts/cloudflare-headers.txt site/_headers
           npx --yes wrangler@4 pages deploy site --project-name "$CF_PROJECT" --branch main --commit-dirty=true
       # Once the website is on Cloudflare, the GitHub Pages copy only forwards visitors (old links included) to it.
       - name: GitHub Pages forwards to Cloudflare
