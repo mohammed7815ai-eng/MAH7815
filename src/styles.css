@@ -309,3 +309,27 @@ button.share { display: inline-flex; align-items: center; gap: 8px; color: var(-
 .none-above input { width: 20px; height: 20px; flex: none; accent-color: var(--ok); }
 .none-above.on { border-style: solid; border-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
 .none-above:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Save my plan (PDF) and printing: a heading with flag, title and date, shown only on paper and in the PDF. */
+.print-head { display: none; }
+@media print { .print-head { display: flex; } }
+.pdf-export .print-head {
+  display: flex;
+}
+.print-head {
+  align-items: center; gap: 12px; padding: 0 0 12px; margin: 0 0 12px; border-bottom: 2px solid var(--accent);
+}
+.print-head svg { flex: none; border-radius: 4px; }
+.print-head div { display: flex; flex-direction: column; gap: 2px; }
+.print-head strong { font-size: 1.25rem; color: var(--accent); }
+.print-head span { font-size: 0.85rem; color: var(--muted); }
+.pdf-export body { background: #fff; }
+.pdf-export .results { background: #fff; padding: 8px; }
+.pdf-export details { display: none; }
+.notice.error { color: var(--alert); }
+
+/* How to fill in the form */
+.guide { margin: 0 0 12px; padding: 12px 16px; }
+.guide summary { font-weight: 700; color: var(--accent); cursor: pointer; }
+.guide ol { margin: 8px 0 0; padding-inline-start: 22px; display: grid; gap: 6px; line-height: 1.55; }
+.guide li:first-child { font-weight: 600; }

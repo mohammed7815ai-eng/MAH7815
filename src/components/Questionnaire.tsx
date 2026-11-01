@@ -118,6 +118,14 @@ export function Questionnaire({ answers, onChange, onSubmit, onReset }: {
   return (
     <form className="questionnaire" onSubmit={(e) => { e.preventDefault(); submit(); }}>
       <Hero caption={t('hero.caption')} />
+      <details className="card guide" open>
+        <summary>{t('guide.title')}</summary>
+        <ol>
+          {(['guide.lang', 'guide.basics', 'guide.answer', 'guide.submit', 'guide.save'] as const).map((k) => (
+            <li key={k}>{t(k)}</li>
+          ))}
+        </ol>
+      </details>
       <p className="lead">{t('form.intro')}</p>
 
       <Section title={t('form.basics')}>

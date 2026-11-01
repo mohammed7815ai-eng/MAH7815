@@ -1,4 +1,8 @@
+import { useRef, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { useI18n } from '../i18n';
+import { deliverPdf, pdfFileName, planPdf } from '../pdf';
+import { Flag } from './Flag';
 import { SOURCES } from '../engine/sources';
 import { Charts } from './Charts';
 import type { Answers, Assessment, Recommendation } from '../engine/types';
@@ -22,9 +26,34 @@ export function Results({ answers, assessment, sendStatus, onEdit, onAskAi }: {
 }) {
   const { t, tm } = useI18n();
   const recs = assessment.recommendations.filter((r) => r.status !== 'notApplicable');
+  const ref = useRef<HTMLDivElement>(null);
+  const [pdfState, setPdfState] = useState<'idle' | 'working' | 'saved' | 'error'>('idle');
+  const today = new Date().toLocaleDateString('en-GB');
+
+  const savePdf = async () => {
+    if (!ref.current || pdfState === 'working') return;
+    setPdfState('working');
+    try {
+      const blob = await planPdf(ref.current, t('results.title'));
+      const r = await deliverPdf(blob, pdfFileName());
+      setPdfState(r === 'cancelled' ? 'idle' : 'saved');
+    } catch (e) {
+      console.warn('PDF', e);
+      setPdfState('error');
+    }
+  };
 
   return (
-    <div className="results">
+    <div className="results" ref={ref}>
+      {/* Shown only in the PDF and on paper: who made the plan and when. */}
+      <div className="print-head">
+        <Flag width={46} />
+        <div>
+          <strong>{t('app.title')}</strong>
+          <span>{t('app.subtitle')}</span>
+          <span>{t('pdf.date', { date: today })}</span>
+        </div>
+      </div>
       <div className="results-head">
         <h2>{t('results.title')}</h2>
         <p className="muted">{t('results.for', { age: answers.age ?? '', sex: t(`sex.${answers.sex}`) })}</p>
@@ -89,10 +118,18 @@ export function Results({ answers, assessment, sendStatus, onEdit, onAskAi }: {
       <p className="muted small">{t('about.disclaimer')}</p>
 
       <div className="actions no-print">
-        <button className="primary" onClick={onEdit}>{t('results.edit')}</button>
-        <button onClick={() => window.print()}>{t('results.print')}</button>
+        <button onClick={onEdit}>{t('results.edit')}</button>
+        <button className="primary" onClick={savePdf} disabled={pdfState === 'working'} aria-busy={pdfState === 'working'}>
+          {pdfState === 'working' ? t('results.pdfWorking') : t('results.savePdf')}
+        </button>
+        {!Capacitor.isNativePlatform() && <button onClick={() => window.print()}>{t('results.printOnly')}</button>}
         {__AI_ASSISTANT__ && <button onClick={onAskAi}>{t('results.askAi')}</button>}
       </div>
+      {(pdfState === 'saved' || pdfState === 'error') && (
+        <p className={`notice no-print ${pdfState === 'error' ? 'error' : ''}`} role="status">
+          {t(pdfState === 'saved' ? 'results.pdfSaved' : 'results.pdfError')}
+        </p>
+      )}
     </div>
   );
 }

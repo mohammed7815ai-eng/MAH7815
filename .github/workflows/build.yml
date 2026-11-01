@@ -151,6 +151,7 @@ jobs:
         with: { path: artifacts }
       - run: cd artifacts/web-build && zip -r ../../CancerScreeningGuide-web.zip .
       - run: cd artifacts/web-build-iraq && zip -r ../../CancerScreeningGuide-Iraq-web.zip .
+      - run: cp public/guide-ar.pdf Filling-Guide-Arabic.pdf && cp public-iraq/guide-ar.pdf Filling-Guide-Arabic-Iraq.pdf
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.version.outputs.tag }}
@@ -161,6 +162,7 @@ jobs:
             Iraq website: https://mohammed7815ai-eng.github.io/MAH7815/iraq/
             Windows: download Cancer-Screening-Guide-Setup (installer with Start menu and desktop shortcuts) or the Portable .exe (runs without installing).
             Android: download CancerScreeningGuide.apk on the phone and open it (allow installing from this source when asked).
+            Filling-Guide-Arabic.pdf (and the -Iraq one): one-page Arabic instructions for filling in the form, with pictures.
             Web: unzip CancerScreeningGuide-web.zip and host it, or open index.html.
             Kurdish and Arabic texts are machine-drafted; use the Edit translations tab to correct them.
           files: |
@@ -170,3 +172,5 @@ jobs:
             artifacts/android-iraq/*.apk
             CancerScreeningGuide-web.zip
             CancerScreeningGuide-Iraq-web.zip
+            Filling-Guide-Arabic.pdf
+            Filling-Guide-Arabic-Iraq.pdf
