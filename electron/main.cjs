@@ -47,15 +47,16 @@ function createWindow() {
   });
   win.once('ready-to-show', () => win.show());
   win.loadFile(path.join(__dirname, '..', 'dist-electron', 'index.html'));
-  // Open external links (guideline sources) in the default browser.
+  // Open external links (guideline sources, share buttons) in the default browser, mail or Viber app.
+  const external = (url) => /^(https:\/\/|mailto:|viber:)/.test(url);
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (/^https:\/\//.test(url)) shell.openExternal(url);
+    if (external(url)) shell.openExternal(url);
     return { action: 'deny' };
   });
   win.webContents.on('will-navigate', (e, url) => {
     if (!url.startsWith('file://')) {
       e.preventDefault();
-      if (/^https:\/\//.test(url)) shell.openExternal(url);
+      if (external(url)) shell.openExternal(url);
     }
   });
 }

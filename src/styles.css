@@ -333,3 +333,16 @@ button.share { display: inline-flex; align-items: center; gap: 8px; color: var(-
 .guide summary { font-weight: 700; color: var(--accent); cursor: pointer; }
 .guide ol { margin: 8px 0 0; padding-inline-start: 22px; display: grid; gap: 6px; line-height: 1.55; }
 .guide li:first-child { font-weight: 600; }
+
+/* Share panel (Windows app, desktop browsers and anywhere without a share sheet) */
+.share-wrap { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; max-width: 100%; }
+.share-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; box-shadow: 0 4px 16px rgb(0 0 0 / 0.08); max-width: 100%; box-sizing: border-box; }
+.share-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.share-link { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); font-weight: 600; text-decoration: none; color: #fff; font-size: 0.95rem; }
+.share-link.whatsapp { background: #1f9d55; border-color: #1f9d55; }
+.share-link.telegram { background: #2481cc; border-color: #2481cc; }
+.share-link.facebook { background: #1877f2; border-color: #1877f2; }
+.share-link.viber { background: #7360f2; border-color: #7360f2; }
+.share-link.email { background: #5b6472; border-color: #5b6472; }
+.share-link.copy { background: var(--surface); color: var(--accent); border-color: var(--accent); }
+.share-url { margin: 8px 0 0; font-size: 0.85rem; color: var(--muted); overflow-wrap: anywhere; }
